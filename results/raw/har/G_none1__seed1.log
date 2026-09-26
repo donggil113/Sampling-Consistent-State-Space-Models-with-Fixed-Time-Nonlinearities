@@ -1,0 +1,32 @@
+group G_none1 seed 1 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4335 dev 0.9565 (35.8s)
+  ep   1 loss 0.1378 dev 0.9572 (38.2s)
+  ep   2 loss 0.1175 dev 0.9715 (36.7s)
+  ep   3 loss 0.1089 dev 0.9544 (36.4s)
+  ep   4 loss 0.0945 dev 0.9615 (36.6s)
+  ep   5 loss 0.0837 dev 0.9629 (35.6s)
+  ep   6 loss 0.0716 dev 0.9615 (35.5s)
+  ep   7 loss 0.0617 dev 0.9622 (36.5s)
+  ep   8 loss 0.0563 dev 0.9579 (36.0s)
+  ep   9 loss 0.0504 dev 0.9650 (35.2s)
+  ep  10 loss 0.0441 dev 0.9665 (37.5s)
+  ep  11 loss 0.0412 dev 0.9629 (37.9s)
+  ep  12 loss 0.0371 dev 0.9622 (38.9s)
+  ep  13 loss 0.0350 dev 0.9622 (35.1s)
+  ep  14 loss 0.0333 dev 0.9622 (36.4s)
+  eval B_point_clock1     native         acc 0.9328
+  eval B_point_clock1     foh_m2         acc 0.9328
+  eval B_point_clock1     foh_m4         acc 0.9328
+  eval B_point_clock1     foh_rand       acc 0.9328
+  eval B_point_clock1     zoh_m2         acc 0.9328
+  eval B_point_clock1     down2          acc 0.9342
+  eval B_point_clock1     down4          acc 0.9345
+  eval B_point_clock1     down2_reknot   acc 0.9342
+  eval B_point_clock1     drop30         acc 0.9332
+  eval B_point_clock1     drop50         acc 0.9304
+  eval B_point_clock1     drop70         acc 0.9165
+  eval B_point_clock1     drop50_reknot  acc 0.9304
+  fp64 B_point_clock1: {'foh_m2': 0.0, 'foh_m4': 0.0, 'foh_rand': 0.0, 'zoh_m2': 0.0, 'down2_reknot': 0.0}
+  eval B_dtonly           native         acc 0.9328
+  eval B_dtonly           foh_m2         acc 0.9338
+  eval B_dtonly           foh_m4         acc 0.9342

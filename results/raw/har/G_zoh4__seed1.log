@@ -1,0 +1,29 @@
+group G_zoh4 seed 1 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4281 dev 0.9265 (28.8s)
+  ep   1 loss 0.1528 dev 0.9422 (31.2s)
+  ep   2 loss 0.1216 dev 0.9608 (30.3s)
+  ep   3 loss 0.1112 dev 0.9579 (29.6s)
+  ep   4 loss 0.0974 dev 0.9508 (30.3s)
+  ep   5 loss 0.0856 dev 0.9508 (29.7s)
+  ep   6 loss 0.0729 dev 0.9572 (33.4s)
+  ep   7 loss 0.0632 dev 0.9579 (29.2s)
+  ep   8 loss 0.0575 dev 0.9522 (30.4s)
+  ep   9 loss 0.0492 dev 0.9601 (30.6s)
+  ep  10 loss 0.0451 dev 0.9593 (28.9s)
+  ep  11 loss 0.0393 dev 0.9601 (28.8s)
+  ep  12 loss 0.0349 dev 0.9608 (27.5s)
+  ep  13 loss 0.0321 dev 0.9608 (26.8s)
+  ep  14 loss 0.0303 dev 0.9608 (29.0s)
+  eval A2_zoh_clock4      native         acc 0.9179
+  eval A2_zoh_clock4      foh_m2         acc 0.9172
+  eval A2_zoh_clock4      foh_m4         acc 0.9169
+  eval A2_zoh_clock4      foh_rand       acc 0.9179
+  eval A2_zoh_clock4      zoh_m2         acc 0.9179
+  eval A2_zoh_clock4      down2          acc 0.9169
+  eval A2_zoh_clock4      down4          acc 0.9118
+  eval A2_zoh_clock4      down2_reknot   acc 0.9172
+  eval A2_zoh_clock4      drop30         acc 0.9125
+  eval A2_zoh_clock4      drop50         acc 0.9036
+  eval A2_zoh_clock4      drop70         acc 0.8751
+  eval A2_zoh_clock4      drop50_reknot  acc 0.9118
+  fp64 A2_zoh_clock4: {'foh_m2': 0.01660194347810043, 'foh_m4': 0.025232221066358508, 'foh_rand': 0.008237714126083172, 'zoh_m2': 4.1844874024839184e-16, 'down2_reknot': 0.027673204426682443}

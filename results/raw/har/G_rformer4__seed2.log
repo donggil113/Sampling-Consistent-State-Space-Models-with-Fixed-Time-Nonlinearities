@@ -1,0 +1,12 @@
+group G_rformer4 seed 2 lr 0.001 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.3939 dev 0.9586 (14.8s)
+  ep   1 loss 0.1786 dev 0.9422 (20.1s)
+  ep   2 loss 0.1486 dev 0.9551 (18.6s)
+  ep   3 loss 0.1390 dev 0.9729 (17.5s)
+  ep   4 loss 0.1330 dev 0.9629 (18.3s)
+  ep   5 loss 0.1335 dev 0.9515 (19.1s)
+  ep   6 loss 0.1285 dev 0.9558 (18.5s)
+  ep   7 loss 0.1263 dev 0.9486 (16.8s)
+  ep   8 loss 0.1190 dev 0.9565 (17.8s)
+  ep   9 loss 0.1144 dev 0.9429 (18.3s)
+  ep  10 loss 0.1069 dev 0.9437 (19.7s)

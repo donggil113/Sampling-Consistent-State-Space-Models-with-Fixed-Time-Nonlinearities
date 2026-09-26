@@ -1,0 +1,17 @@
+group G_zoh1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  eval A2_zoh_clock       native         acc 0.9172
+  eval A2_zoh_clock       foh_m2         acc 0.9172
+  eval A2_zoh_clock       foh_m4         acc 0.9172
+  eval A2_zoh_clock       foh_rand       acc 0.9172
+  eval A2_zoh_clock       zoh_m2         acc 0.9172
+  eval A2_zoh_clock       down2          acc 0.9165
+  eval A2_zoh_clock       down4          acc 0.9138
+  eval A2_zoh_clock       down2_reknot   acc 0.9186
+  eval A2_zoh_clock       drop30         acc 0.9182
+  eval A2_zoh_clock       drop50         acc 0.9080
+  eval A2_zoh_clock       drop70         acc 0.8846
+  eval A2_zoh_clock       drop50_reknot  acc 0.9111
+  fp64 A2_zoh_clock: {'foh_m2': 0.006436872703254036, 'foh_m4': 0.00965661775903052, 'foh_rand': 0.006252326713589928, 'zoh_m2': 3.2148333546533696e-16, 'down2_reknot': 0.0748447928677142}
+  eval A3_zoh_perobs      native         acc 0.9172
+  eval A3_zoh_perobs      foh_m2         acc 0.9175
+  eval A3_zoh_perobs      foh_m4         acc 0.9179

@@ -1,0 +1,12 @@
+group G_tfpatch4 seed 2 lr 0.001 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.5262 dev 0.9458 (12.0s)
+  ep   1 loss 0.1721 dev 0.9586 (20.5s)
+  ep   2 loss 0.1522 dev 0.8966 (18.7s)
+  ep   3 loss 0.1416 dev 0.9708 (18.8s)
+  ep   4 loss 0.1300 dev 0.9693 (18.0s)
+  ep   5 loss 0.1257 dev 0.9601 (18.6s)
+  ep   6 loss 0.1180 dev 0.9579 (19.1s)
+  ep   7 loss 0.1148 dev 0.9544 (16.5s)
+  ep   8 loss 0.1095 dev 0.9565 (17.8s)
+  ep   9 loss 0.1033 dev 0.9586 (18.6s)
+  ep  10 loss 0.1014 dev 0.9608 (18.4s)

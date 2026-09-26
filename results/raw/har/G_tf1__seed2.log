@@ -1,0 +1,29 @@
+group G_tf1 seed 2 lr 0.001 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.5527 dev 0.9365 (89.8s)
+  ep   1 loss 0.1771 dev 0.9422 (88.0s)
+  ep   2 loss 0.1536 dev 0.9458 (85.8s)
+  ep   3 loss 0.1411 dev 0.9586 (93.1s)
+  ep   4 loss 0.1388 dev 0.9458 (91.7s)
+  ep   5 loss 0.1317 dev 0.9536 (96.0s)
+  ep   6 loss 0.1273 dev 0.9372 (101.5s)
+  ep   7 loss 0.1233 dev 0.9315 (91.6s)
+  ep   8 loss 0.1167 dev 0.9458 (89.5s)
+  ep   9 loss 0.1101 dev 0.9479 (89.2s)
+  ep  10 loss 0.1056 dev 0.9486 (89.5s)
+  ep  11 loss 0.0997 dev 0.9401 (92.2s)
+  ep  12 loss 0.0968 dev 0.9465 (86.5s)
+  ep  13 loss 0.0935 dev 0.9458 (88.1s)
+  ep  14 loss 0.0918 dev 0.9437 (89.2s)
+  eval B_tf_clock1        native         acc 0.8907
+  eval B_tf_clock1        foh_m2         acc 0.8907
+  eval B_tf_clock1        foh_m4         acc 0.8907
+  eval B_tf_clock1        foh_rand       acc 0.8907
+  eval B_tf_clock1        zoh_m2         acc 0.8907
+  eval B_tf_clock1        down2          acc 0.8918
+  eval B_tf_clock1        down4          acc 0.8789
+  eval B_tf_clock1        down2_reknot   acc 0.8918
+  eval B_tf_clock1        drop30         acc 0.8914
+  eval B_tf_clock1        drop50         acc 0.8853
+  eval B_tf_clock1        drop70         acc 0.8697
+  eval B_tf_clock1        drop50_reknot  acc 0.8853
+  fp64 B_tf_clock1: {'foh_m2': 0.0, 'foh_m4': 0.0, 'foh_rand': 0.0, 'zoh_m2': 0.0, 'down2_reknot': 0.0}

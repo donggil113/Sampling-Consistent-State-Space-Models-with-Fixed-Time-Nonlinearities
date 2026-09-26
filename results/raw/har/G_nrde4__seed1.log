@@ -1,0 +1,29 @@
+group G_nrde4 seed 1 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4306 dev 0.8845 (4.0s)
+  ep   1 loss 0.1683 dev 0.9165 (5.6s)
+  ep   2 loss 0.1361 dev 0.9066 (4.7s)
+  ep   3 loss 0.1356 dev 0.9101 (5.0s)
+  ep   4 loss 0.1225 dev 0.9058 (4.0s)
+  ep   5 loss 0.1098 dev 0.9151 (4.7s)
+  ep   6 loss 0.1042 dev 0.9123 (4.7s)
+  ep   7 loss 0.0977 dev 0.9094 (4.0s)
+  ep   8 loss 0.0914 dev 0.9058 (4.5s)
+  ep   9 loss 0.0836 dev 0.9073 (4.7s)
+  ep  10 loss 0.0767 dev 0.9123 (4.1s)
+  ep  11 loss 0.0708 dev 0.9094 (5.1s)
+  ep  12 loss 0.0659 dev 0.9087 (4.7s)
+  ep  13 loss 0.0630 dev 0.9101 (4.6s)
+  ep  14 loss 0.0612 dev 0.9108 (4.9s)
+  eval B_nrde_clock4      native         acc 0.8680
+  eval B_nrde_clock4      foh_m2         acc 0.8680
+  eval B_nrde_clock4      foh_m4         acc 0.8680
+  eval B_nrde_clock4      foh_rand       acc 0.8680
+  eval B_nrde_clock4      zoh_m2         acc 0.8670
+  eval B_nrde_clock4      down2          acc 0.8568
+  eval B_nrde_clock4      down4          acc 0.6264
+  eval B_nrde_clock4      down2_reknot   acc 0.8568
+  eval B_nrde_clock4      drop30         acc 0.8639
+  eval B_nrde_clock4      drop50         acc 0.8385
+  eval B_nrde_clock4      drop70         acc 0.7536
+  eval B_nrde_clock4      drop50_reknot  acc 0.8385
+  fp64 B_nrde_clock4: {'foh_m2': 1.4683855374497254e-14, 'foh_m4': 1.7890366371726276e-14, 'foh_rand': 1.3826403965767485e-14, 'zoh_m2': 0.18491758228377747, 'down2_reknot': 2.370090782251483e-14}
