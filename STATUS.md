@@ -12,8 +12,10 @@ The pre-registered decision rule (`configs/prereg_n2.json`) fails on both criter
   - On UCI-HAR the proposed model does not beat fixed-grid resampling + the same SSM.
   - P1 (exact FOH stem, native-rate clock) vs point resampling: −0.64 pp on the lossy-condition mean, subject-bootstrap 95% CI [−1.23, +0.00]; −0.41 pp native.
   - P4 (coarse clock) vs point / box-filter resampling at the same clock: −0.35 / −0.68 pp.
-  - The one robust gain of the fixed clock is under heavy missingness. The same trained weights run with nonlinear updates on the clock instead of per observation gain +0.80 pp [+0.42, +1.20]. Fixed-grid resampling already delivers this gain (B_point_clock1 vs B_dtonly: +0.49 pp). **The gain is explained by simple resampling.**
-- **G2 (not prior work): FAIL.** After adversarial re-checking, more than 20 sources have overall overlap "substantial" with "exact input summary + nonlinear updates on an observation-independent clock". These include:
+  - The one robust gain of the fixed clock is robustness to missing observations, for weights trained on the native grid only. Running the same trained weights with nonlinear updates on the clock instead of per observation gains +0.80 pp [+0.42, +1.20] on the lossy mean, and +2.50 pp at 70% drop.
+  - Fixed-grid resampling without any stem shows the same gain: B_point_clock1 vs B_dtonly, same weights, +0.49 pp [+0.13, +0.86]. **The gain is explained by simple resampling.**
+  - Part of it may be a train/test grid mismatch of the zero-shot per-observation rule. Grid-augmented training (AUG arm) was NOT_RUN.
+- **G2 (not prior work): FAIL.** After adversarial re-checking, 18 distinct sources (27 verification records) have overall overlap "substantial" with "exact input summary + nonlinear updates on an observation-independent clock". Six have "full" overlap on the fixed-time-nonlinearity component. The sources include:
   - Walker et al. 2026, with an explicitly stated exact invariance to value-preserving insertions;
   - Rough Transformer 2024;
   - Logsig-RNN 2019;
@@ -28,14 +30,18 @@ The pre-registered decision rule (`configs/prereg_n2.json`) fails on both criter
 
 > Does a nonlinear update at every observation make the representation depend on the grid of the same reconstructed input?
 
-**Yes. The size is setting-dependent.**
+**Yes, but the mechanism depends on the reconstruction rule, and the size depends on the setting.**
+
+- **FOH rule.** A per-knot σ alone breaks invariance unless σ is affine. This is STANDARD, an instance of the operator-learning principle.
+- **ZOH rule.** A per-knot σ on the held input is harmless. What breaks invariance is per-observation re-sampling of each layer's output between layers, and it does so for linear and nonlinear layers alike.
+- **The nonlinearity** is what makes this unavoidable, because a nonlinear stack cannot be integrated exactly as one cascade.
 
 | Setting | Grid change (lossless for the model's own rule) | Effect |
 |---|---|---|
 | Minimal counterexample (CE1, exact) | one virtual knot | output 1/2 → 3/8. It is 3/8 for both when σ is on a fixed clock. For FOH re-reconstruction, invariance holds ⇔ σ is affine (`docs/THEORY.md` S2) |
 | 2-layer S5/FlowState-style stack (CE2, float64) | ZOH splitting m = 2…16 | layer 1 exact (≤ 6.8e-15); output change 19–35%. With σ = identity: 22–40% (the cause is per-knot re-sampling of intermediate signals) |
-| **Released FlowState** (ETTm1, 16 windows) | every sample repeated ×2 | forecast change: median 4.2% (v1.0) and 7.0% (r1.1), max 24%. Larger than under real 2× downsampling (2.2% / 3.9%). In float64, layer 0 is exact (5.7e-14) and layers 1–5 change by 2–49%. This contradicts FlowState App. B.1's statement that pointwise ops add no discretization error |
-| Trained HAR per-observation models (3 seeds) | FOH or ZOH virtual knots | median relative logit change 2–6e-3 in float32 (float64 medians 2.6–5.6e-3). About 40–70% of it is a change at the same physical times (1.5–3.5e-3); the rest is a readout-quadrature term. Flip rate ≤ 0.21%: **numerically real, practically negligible** on HAR |
+| **Released FlowState** (ETTm1, 16 windows) | every sample repeated ×2 (added post hoc; the pre-registered FOH test gives 4.7–4.8% / 6.7%, not consistent at ≤ 1e-3) | forecast change: median 4.2% (v1.0) and 7.0% (r1.1), max 24%. The median is larger than under real 2× downsampling (2.2% / 3.9%). With RevIN statistics fixed (FS3, 4 windows), layer 0 is exact in float64 (5.7e-14) and layers 1–5 change by 2–49%. This quantifies the inter-layer re-hold error that FlowState App. B.1's multi-layer remark acknowledges and bounds at O(Δ) |
+| Trained HAR per-observation models (3 seeds) | pre-registered rule-matched virtual knots (A1: FOH; A3, B_dtonly: ZOH) | median relative logit change 2.1–4.9e-3 in float32 (float64 medians 2.6–5.6e-3). About 40–70% of it is a change at the same physical times (1.5–3.5e-3). For A1 the rest is of the size of a grid-free readout-quadrature control. For A3 and B_dtonly that control is 0, so the rest is the representation at the virtual knots. Flip rate ≤ 0.10%: **numerically real, practically negligible** on HAR |
 
 ## What was done
 
@@ -58,16 +64,18 @@ The pre-registered decision rule (`configs/prereg_n2.json`) fails on both criter
 - **D4.** FlowState refinement sequences corrected (pre-window hold).
 - **D7.** After an adversarial code review: rule-matched ZOH twins for the artifact share, and an H2 decomposition (post hoc).
 - **D8.** Readout span normalisation.
+- **D11.** FlowState ZOH-repeat condition and FS2/FS3 added post hoc.
+- **D12.** Up to 5–6 concurrent processes instead of 4.
 - **D9.** Transformer baselines are non-causal.
 - **D10.** Secondary AUG arm NOT_RUN (cost).
 
-The main arm finished within the pre-registered 5-hour budget (4 h 42 min).
+The main arm finished 4 h 42 min after launch, within the 5-hour budget. It used up to 5–6 concurrent processes instead of the registered 4 (D12). The float64 H2 medians (supplementary) were computed after the 5-hour mark.
 
 ## NOT_RUN / limits
 
 - **GPU / float16 / bfloat16 kernels.** NOT_RUN: no GPU in this container. The float32 CPU floors are measured.
 - **AUG arm** (grid-augmented training of per-observation models). NOT_RUN (cost: one epoch did not finish in 27 min).
-- **SFI-STFT frame-clock baseline** (suggested by the literature critic). NOT_RUN. Its key property, a fixed clock without exact integration and hence not refinement-invariant, is measured by A2_zoh_clock and B_bilin_clock4.
+- **SFI-STFT frame-clock baseline** (suggested by the literature critic). NOT_RUN. Whether an SFI-STFT front end is refinement-invariant is untested here. The distinction from USES/USEMamba in `RELATED_WORK.md` is an unverified agent claim.
 - **One real classification task only** (UCI-HAR, 50 Hz, subject split), plus one forecasting probe (FlowState on ETTm1).
   - EigenWorms, Speech Commands and PDM audio were NOT_RUN.
   - HAR models are small (≈55k parameters, 15 epochs). Absolute accuracy (≈92–93%) is below state-of-the-art HAR models (macro-F1 93–97 reported by BabyMamba-HAR 2026), so only relative comparisons are meaningful.
@@ -77,7 +85,8 @@ The main arm finished within the pre-registered 5-hour budget (4 h 42 min).
 ## Next (only if the owner wants an analysis note, not an architecture)
 
 1. Write the analysis as an instance of the known operator-learning principle (SNO/ReNO/CNO) for time-series SSMs.
-   - Content: the CE1/S2 proposition, the FlowState float64 layer attribution, and the three-way grid-change protocol.
-   - It must credit Walker 2026, RFormer, Logsig-RNN, the SFI layers and the multirate PDM SSM.
+   - Content: the measured size of the inter-layer re-hold error in the released FlowState (with credit to its App. B.1 multi-layer remark), the three-way grid-change protocol with knot provenance, and the HAR measurements.
+   - CE1/S2 is STANDARD; use it only as an illustration.
+   - It must credit Walker 2026, RFormer, Logsig-RNN, torchcde, the SFI layers and the multirate PDM SSM.
 2. If a GPU becomes available, run `scripts/gpu_gate.py`.
 3. Optionally, test FlowState on more series and horizons, and run the AUG arm with a GPU.

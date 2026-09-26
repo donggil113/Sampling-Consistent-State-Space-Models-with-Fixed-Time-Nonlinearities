@@ -51,7 +51,7 @@ Then F_θ(O) depends on O only through R(O) restricted to [0, τ_J]. Hence F_θ(
 - The same argument applies to *any* path functional on a fixed clock. That includes plain fixed-grid resampling (z_j = X(τ_j)), which is the "trivial exact stem", and fixed-window log-signatures (K6). **Exact refinement invariance is therefore not specific to the exact SSM stem.** It is shared by the mandatory baseline, fixed-grid resampling + SSM.
 - In floating point the invariance holds only up to rounding; the floors are measured in S5.
 
-### S2 — Per-knot nonlinearity with FOH re-reconstruction is refinement-invariant only if affine (PROVED; low–moderate novelty)
+### S2 — Per-knot nonlinearity with FOH re-reconstruction is refinement-invariant only if affine (STANDARD; stated for completeness)
 
 **Statement.** Consider a layer that:
 
@@ -75,16 +75,17 @@ Suppose this layer is invariant under insertion of one virtual knot, for all inp
 - With right-hold ZOH re-reconstruction: 1 vs 5/8.
 - With σ evaluated on a fixed clock {0, ½, 1}: 3/8 for both knot sets.
 
-**ZOH version (PROVED by counterexample, CE2).**
+**ZOH version (NUMERICALLY SHOWN, CE2; float64).**
 
 - *Layer 1 is invariant.* Under ZOH-lossless splitting (held values repeated), a per-knot σ applied to the *held input* is invariant, because the values do not change. CE2 confirms this: layer 1 changes by ≤ 6.8e-15 (maximum over 8 units and m = 2…16).
 - *Deeper layers are not.* Any deeper layer receives a signal that varies inside held intervals (the output of a nontrivial linear layer). Re-holding that signal at the knots changes it under refinement, **even for σ = identity**: the change is 19–35% with GELU and 22–40% with identity (CE2, median over 8 units, m = 2…16).
-- *Diagnosis.* The immediate source is per-knot *re-sampling of intermediate continuous signals*. For σ = identity it can be removed by integrating the whole linear cascade exactly: CE2 cascade_exact ≤ 6.1e-15. For nonlinear σ no closed form exists in general, which is what forces the nonlinearity to be evaluated somewhere. Evaluating it on the observation knots makes the representation grid-dependent; evaluating it on a fixed clock does not (CE2 clock_gelu ≤ 8.0e-15).
+- *Diagnosis.* The immediate source is per-knot *re-sampling of intermediate continuous signals*. For σ = identity it can be removed by integrating the whole linear cascade exactly: CE2 cascade_exact ≤ 6.1e-15. For nonlinear σ no closed form is known to us, which is what forces the nonlinearity to be evaluated somewhere. Evaluating it on the observation knots makes the representation grid-dependent; evaluating it on a fixed clock does not (CE2 clock_gelu ≤ 8.0e-15).
 
 **Relation to prior work.**
 
 - The principle "nonlinearity and discretization do not commute" is K8 (ReNO/CNO) in the neural-operator setting.
-- FlowState App. B.1 states the opposite for its per-sample pointwise operations: they "do not introduce additional temporal discretization error". S2/CE2 and the FlowState probe (FS1) contradict that sentence for multi-layer models. FS1 was run on the released weights, on real data, with refinement that is lossless for FlowState's own ZOH rule; see `RESEARCH_PACKET.md`.
+- The identity σ((1−α)a+αb) = (1−α)σ(a)+ασ(b) is the definition of an affine map (Jensen's functional equation). S2 is therefore a textbook fact and an instance of K8, not a contribution.
+- FlowState App. B.1 notes that per-sample pointwise operations "do not introduce additional temporal discretization error" within a layer. Its multi-layer remark acknowledges a "fresh ZOH discretization error introduced at each subsequent SSM layer", which is the CE2 mechanism. The FlowState probe (`RESEARCH_PACKET.md` §5) measures the size of that error on the released weights under ZOH-lossless refinement; it does not refute the appendix.
 
 ### S3 — Per-observation stacks converge to their own continuous-time limit under refinement (SKETCH)
 
@@ -113,7 +114,7 @@ Suppose this layer is invariant under insertion of one virtual knot, for all inp
   | window-sum | 2.5e-7 | 1.5e-6 | 8.7e-6 |
   | sequential per-segment composition | — | 6.5e-5 | — |
 
-  Float64 stays ≤ 4.8e-15 up to m = 4096.
+  Float64 stays ≤ 5.3e-15 (maximum over windows) up to m = 4096.
 - **Condition.** A stable φ2 is required. Naive φ2 in float32 has relative error 4.1 at |z| = 1e-4. With the window-sum and naive φ, the float32 floor rises to 1.2e-3 at m = 4096. Refinement drives |z| → 0, so the series branch is a necessary condition for numerical invariance, not an optimisation.
 
 ### S6 — Cost structure (MEASURED; structural)
@@ -140,7 +141,7 @@ Suppose this layer is invariant under insertion of one virtual knot, for all inp
 ## 3. What is and is not claimed
 
 - **Claimed**
-  - S1 and S2, with explicit proofs; S5–S7 as measurements.
+  - S1 with an explicit (elementary) proof; S5–S7 as measurements. S2 is standard and is stated only for completeness.
   - The empirical answer to the core question on a trained real-signal model (HAR) and on a released foundation model (FlowState), with lossless refinement defined relative to each model's own reconstruction rule.
 - **Not claimed**
   - Exact FOH/ZOH integration (K1), Grönwall bounds (K3), interpolation error (K4), log-signature invariance (K6), the "linear front end → decimation → nonlinear layers" structure (K9), or any aliasing recovery.

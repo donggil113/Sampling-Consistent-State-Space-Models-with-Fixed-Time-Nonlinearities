@@ -116,6 +116,22 @@ def main():
             diffs[f"{p} - {b}"] = {"seeds": common, "lossy_mean_diff_pp": 100 * float(dl.mean()), "lossy_ci95_pp": [100 * v for v in boot_subject(dl, subj)],
                                    "native_diff_pp": 100 * float(dn.mean()), "native_ci95_pp": [100 * v for v in boot_subject(dn, subj)]}
     out["paired_differences"] = diffs
+    # 2x2 ablation contrasts (same trained weights within each pair) incl. drop70, all computed here
+    abl = {}
+    for p, b in (("P1_foh_clock", "A1_foh_perobs"), ("A2_zoh_clock", "A3_zoh_perobs"), ("B_point_clock1", "B_dtonly"),
+                 ("P1_foh_clock", "A2_zoh_clock"), ("P4_foh_clock", "A2_zoh_clock4"), ("P1_foh_clock", "B_point_clock1"),
+                 ("P4_foh_clock", "B_point_clock4"), ("P4_foh_clock", "B_binmean_clock4"), ("P4_foh_clock", "B_patch_clock4"),
+                 ("P1_foh_clock", "B_dtonly"), ("P1_foh_clock", "B_bilin_clock4"), ("P4_foh_clock", "B_bilin_clock4")):
+        if p not in runs or b not in runs:
+            continue
+        common = sorted(set(runs[p]) & set(runs[b]))
+        row = {"seeds": common}
+        for name, conds in (("lossy_mean", LOSSY), ("drop70", ["drop70"]), ("native", ["native"])):
+            dd = corr(p, conds, common) - corr(b, conds, common)
+            row[name] = {"diff_pp": 100 * float(dd.mean()), "ci95_pp": [100 * v for v in boot_subject(dd, subj)],
+                         "by_seed_pp": [100 * float((corr(p, conds, [s_]) - corr(b, conds, [s_])).mean()) for s_ in common]}
+        abl[f"{p} - {b}"] = row
+    out["ablation_contrasts"] = abl
 
     # ---- cost (idle machine, 1 thread)
     costs = {}
@@ -240,6 +256,13 @@ def write_md(out, supp):
                          f"{g('control', 'median', 'float32_full_test'):.2e} | {g('full', 'median', 'float64_subset'):.2e} | "
                          f"{g('same_times', 'median', 'float64_subset'):.2e} | {100 * g('full', 'flip_rate', 'float32_full_test'):.2f} | "
                          f"{100 * g('same_times', 'flip_rate', 'float32_full_test'):.2f} |")
+    L += ["", "p95 of the per-window relative logit change (float32), lossless refinements:", ""]
+    for spec, m in M.items():
+        L.append(f"- {spec}: " + ", ".join(f"{c} {m[c]['rel_logit_change_p95']:.1e}" for c in ["foh_m2", "foh_m4", "foh_rand", "zoh_m2"]))
+    L += ["", "2x2 ablation and key contrasts (pp; subject-bootstrap 95% CI; per-seed values):", ""]
+    for k, v in out["ablation_contrasts"].items():
+        L.append(f"- {k}: " + "; ".join(f"{n} {v[n]['diff_pp']:+.2f} [{v[n]['ci95_pp'][0]:+.2f}, {v[n]['ci95_pp'][1]:+.2f}] (seeds "
+                                         + ", ".join(f"{x:+.2f}" for x in v[n]['by_seed_pp']) + ")" for n in ("lossy_mean", "drop70", "native")))
     L += ["", "Paired differences (pp), proposed minus other, on common seeds; subject-bootstrap 95% CI:", ""]
     for k, v in out["paired_differences"].items():
         L.append(f"- {k}: lossy mean {v['lossy_mean_diff_pp']:+.2f} [{v['lossy_ci95_pp'][0]:+.2f}, {v['lossy_ci95_pp'][1]:+.2f}]; "

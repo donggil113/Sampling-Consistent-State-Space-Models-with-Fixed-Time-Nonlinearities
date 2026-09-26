@@ -21,7 +21,7 @@ Start here:
 | `src/fxclock/models.py` | proposed model, 2×2 ablation, baselines |
 | `src/fxclock/prep.py` | preprocessing from raw knots to model inputs (part of the measured cost); output query rules |
 | `src/n1ref/` | vendored N1 reference code (pure Python, float64), used as an independent reference |
-| `tests/test_numerics.py` | 22 numerical checks (unittest) |
+| `tests/test_numerics.py` | 23 numerical checks (unittest) |
 | `scripts/counterexample.py` | minimal counterexamples CE1–CE3 |
 | `scripts/run_numerics.py`, `scripts/gpu_gate.py` | φ accuracy, float32 floors, small-dt checks; GPU gate |
 | `scripts/run_har.py`, `scripts/queue_main.sh` | real-signal experiment (UCI-HAR) |
@@ -35,7 +35,8 @@ pip install numpy scipy mpmath torch --index-url https://download.pytorch.org/wh
 python3 -m unittest tests.test_numerics                 # numerical checks
 python3 scripts/counterexample.py                       # CE1-CE3
 python3 scripts/run_numerics.py; python3 scripts/gpu_gate.py
-scripts/queue_main.sh                                   # HAR main arm (about 3-4 h on 4 CPU cores)
+scripts/queue_main.sh                                   # HAR main arm (4 h 42 min here on 4 CPU cores, with the fixes of D6)
+python3 scripts/supplementary_eval.py                   # rule-matched twins + H2 decomposition (D7)
 python3 scripts/cost_har.py; python3 scripts/analyze_har.py
 pip install --no-deps granite-tsfm==0.3.9 && pip install "transformers>=4.57.6" pandas scikit-learn deprecated einops datasets
 python3 scripts/flowstate_probe.py; python3 scripts/flowstate_attribution.py; python3 scripts/flowstate_fp64_layers.py

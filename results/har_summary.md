@@ -97,6 +97,40 @@ H2 decomposition (per-observation rules; medians over windows, then median over 
 | B_dtonly | foh_rand | 2.74e-03 | 1.72e-03 | 2.79e-16 | 2.97e-03 | 1.55e-03 | 0.10 | 0.10 |
 | B_dtonly | zoh_m2 | 3.75e-03 | 1.73e-03 | 3.37e-16 | 4.97e-03 | 2.39e-03 | 0.03 | 0.07 |
 
+p95 of the per-window relative logit change (float32), lossless refinements:
+
+- P1_foh_clock: foh_m2 1.4e-07, foh_m4 1.4e-07, foh_rand 1.4e-07, zoh_m2 6.9e-03
+- A1_foh_perobs: foh_m2 2.5e-02, foh_m4 3.5e-02, foh_rand 2.0e-02, zoh_m2 2.2e-02
+- A2_zoh_clock: foh_m2 6.2e-03, foh_m4 9.2e-03, foh_rand 3.9e-03, zoh_m2 1.4e-07
+- A3_zoh_perobs: foh_m2 2.8e-02, foh_m4 4.0e-02, foh_rand 2.2e-02, zoh_m2 2.4e-02
+- B_point_clock1: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00
+- B_dtonly: foh_m2 2.4e-02, foh_m4 3.4e-02, foh_rand 2.1e-02, zoh_m2 2.2e-02
+- B_tf_clock1: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00
+- P4_foh_clock: foh_m2 1.6e-07, foh_m4 1.6e-07, foh_rand 1.6e-07, zoh_m2 1.1e-02
+- A2_zoh_clock4: foh_m2 1.1e-02, foh_m4 1.6e-02, foh_rand 7.7e-03, zoh_m2 1.6e-07
+- B_point_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00
+- B_binmean_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 2.3e-02
+- B_patch_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00
+- B_tfpatch_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00
+- B_nrde_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 7.2e-02
+- B_rformer_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 3.4e-02
+- B_bilin_clock4: foh_m2 2.5e-02, foh_m4 2.6e-02, foh_rand 2.2e-02, zoh_m2 2.8e-02
+
+2x2 ablation and key contrasts (pp; subject-bootstrap 95% CI; per-seed values):
+
+- P1_foh_clock - A1_foh_perobs: lossy_mean +0.80 [+0.42, +1.20] (seeds +0.72, +0.60, +1.08); drop70 +2.50 [+1.66, +3.33] (seeds +2.34, +2.51, +2.65); native +0.00 [+0.00, +0.00] (seeds +0.00, +0.00, +0.00)
+- A2_zoh_clock - A3_zoh_perobs: lossy_mean +0.67 [+0.46, +0.88] (seeds +0.51, +0.64, +0.86); drop70 +2.06 [+1.47, +2.68] (seeds +1.63, +2.27, +2.27); native +0.00 [+0.00, +0.00] (seeds +0.00, +0.00, +0.00)
+- B_point_clock1 - B_dtonly: lossy_mean +0.49 [+0.13, +0.86] (seeds +0.09, +0.77, +0.60); drop70 +1.85 [+0.91, +2.84] (seeds +1.02, +2.24, +2.31); native +0.00 [+0.00, +0.00] (seeds +0.00, +0.00, +0.00)
+- P1_foh_clock - A2_zoh_clock: lossy_mean +0.29 [-0.10, +0.73] (seeds +0.10, +0.20, +0.56); drop70 +0.54 [-0.18, +1.29] (seeds +0.48, +0.81, +0.34); native +0.08 [-0.08, +0.33] (seeds -0.14, +0.10, +0.27)
+- P4_foh_clock - A2_zoh_clock4: lossy_mean +0.04 [-1.13, +1.26] (seeds -1.16, +0.98, +0.29); drop70 +0.76 [-0.59, +2.09] (seeds -0.24, +2.51, +0.00); native -0.44 [-1.46, +0.77] (seeds -1.56, -0.07, +0.31)
+- P1_foh_clock - B_point_clock1: lossy_mean -0.64 [-1.23, +0.00] (seeds -1.33, -0.54, -0.04); drop70 -1.17 [-1.89, -0.47] (seeds -1.97, -0.44, -1.09); native -0.41 [-1.03, +0.23] (seeds -1.19, -0.34, +0.31)
+- P4_foh_clock - B_point_clock4: lossy_mean -0.35 [-1.46, +0.72] (seeds -0.56, +0.35, -0.85); drop70 -0.84 [-1.85, +0.27] (seeds +0.58, +0.54, -3.63); native -0.00 [-1.11, +1.09] (seeds -0.75, +0.37, +0.37)
+- P4_foh_clock - B_binmean_clock4: lossy_mean -0.68 [-1.84, +0.49] (seeds +0.13, -0.60, -1.56); drop70 -1.19 [-2.32, -0.01] (seeds +0.58, -0.51, -3.63); native -0.51 [-1.64, +0.69] (seeds -0.07, -0.78, -0.68)
+- P4_foh_clock - B_patch_clock4: lossy_mean -0.15 [-1.74, +1.44] (seeds +0.75, -0.41, -0.79); drop70 -0.33 [-1.99, +1.32] (seeds +2.00, +0.17, -3.16); native -0.00 [-1.57, +1.55] (seeds +0.48, -0.71, +0.24)
+- P1_foh_clock - B_dtonly: lossy_mean -0.15 [-0.89, +0.57] (seeds -1.24, +0.24, +0.56); drop70 +0.69 [-0.32, +1.74] (seeds -0.95, +1.80, +1.22); native -0.41 [-1.03, +0.23] (seeds -1.19, -0.34, +0.31)
+- P1_foh_clock - B_bilin_clock4: lossy_mean +0.79 [-0.71, +2.18] (seeds +0.21, +1.27, +0.89); drop70 +0.90 [-0.60, +2.28] (seeds -0.44, +1.32, +1.83); native +0.78 [-0.42, +1.91] (seeds +0.48, +1.43, +0.44)
+- P4_foh_clock - B_bilin_clock4: lossy_mean +0.18 [-0.44, +0.77] (seeds +0.77, +0.21, -0.43); drop70 -0.06 [-0.60, +0.45] (seeds +0.92, +0.14, -1.22); native +0.34 [-0.26, +0.90] (seeds +0.85, +0.20, -0.03)
+
 Paired differences (pp), proposed minus other, on common seeds; subject-bootstrap 95% CI:
 
 - P1_foh_clock - B_point_clock1: lossy mean -0.64 [-1.23, +0.00]; native -0.41 [-1.03, +0.23]

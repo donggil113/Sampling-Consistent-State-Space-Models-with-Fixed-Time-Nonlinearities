@@ -16,21 +16,25 @@ Last updated: 2026-09-26.
      - P1 − point resampling: lossy mean −0.64 pp [−1.23, +0.00], native −0.41 pp.
      - P4 − point / box-filter resampling at the same clock: −0.35 / −0.68 pp.
    - It is also 2.0–3.2× more expensive per window, including preprocessing.
-   - The one robust benefit of the fixed clock needs no exact stem. It is better robustness to heavy missingness: +0.5 to +0.8 pp lossy mean and +1.9 to +2.5 pp at 70% drop, with the same trained weights. The mandatory resampling baseline already delivers it.
-2. **G2: prior work.** More than 20 sources have "substantial" overlap after adversarial re-checking (`RELATED_WORK.md`). They include:
+   - The one robust benefit of evaluating the nonlinear updates on the fixed clock needs no exact stem. For weights trained on the native grid only, clocked inference is more robust to missing observations than zero-shot per-observation dt inference: +0.5 to +0.8 pp lossy mean and +1.9 to +2.5 pp at 70% drop, with the same weights. The mandatory resampling baseline already delivers it.
+   - This is consistent with the known "run at the training grid" effect (Colagrande et al. 2026; the S5 16 → 8 kHz zero-shot drop). The inference switch also changes the linear-layer discretization and the readout. Whether grid-augmented training closes the gap is untested (AUG arm NOT_RUN).
+2. **G2: prior work.** After adversarial re-checking, 18 distinct sources have "substantial" overall overlap. That is 27 verification records, since several papers were verified under more than one key. Six have "full" overlap on the fixed-time-nonlinearity component (`RELATED_WORK.md`). They include:
    - Walker et al. 2026, with an explicit exact invariance to value-preserving insertions and a query partition independent of the observations;
    - Rough Transformer; Logsig-RNN; NRDE / Log-NCDE;
    - the multirate PDM-speech SSM 2026;
    - SFI audio layers;
    - SNO / ReNO / CNO.
 
-**Core question, answered separately: yes, with a setting-dependent size.**
+**Core question, answered separately: yes, but the mechanism depends on the reconstruction rule, and the size depends on the setting.**
 
-- Minimal counterexample: an exact change 1/2 → 3/8.
-- A 2-layer FlowState-style stack: 19–35%.
-- The released FlowState on real data, under a refinement that is lossless for its own rule: 4.2% / 7.0% median forecast change. Layer 0 is exact in float64 and deeper layers change by 2–49%.
-- Trained HAR per-observation models: a real but practically negligible effect. Same-physical-time logit change is 1.5–3.5e-3 and flip rate ≤ 0.21%.
-- Under real downsampling and missing observations, 50–114% of a per-observation model's output change is a knot artifact (same path, different knots). For every path functional it is 0.
+- **FOH rule.** A per-knot σ alone breaks refinement invariance unless σ is affine (CE1, exact: 1/2 → 3/8). This is the standard characterisation of affine maps, and an instance of the known operator-learning principle (`docs/THEORY.md` S2).
+- **ZOH rule.** A per-knot σ applied to the *held input* is harmless (CE2 layer 1 exact). What breaks invariance is per-observation processing *between* layers: each layer's output is re-held at the knots. This happens for linear and nonlinear layers alike (CE2: 19–35% with GELU, 22–40% with identity).
+- **What the nonlinearity does.** It makes this re-sampling unavoidable, because a nonlinear stack cannot be integrated exactly as one cascade (no closed form known to us). A linear stack can (CE2 exact cascade ≤ 6.1e-15).
+- **Released FlowState** (ETTm1, refinement lossless for its own ZOH rule). Median forecast change 4.2% (v1.0) / 7.0% (r1.1). With RevIN statistics fixed (FS3, 4 windows), layer 0 is exact in float64 and layers 1–5 change by 2–49%. With the shipped causal RevIN, layer 0 already changes by 0.1–0.2%.
+  - This quantifies, at native Δ, the inter-layer re-hold error that FlowState's own multi-layer remark (App. B.1) acknowledges and bounds at O(Δ).
+  - Under its pre-registered test (FOH virtual knots, criterion ≤ 1e-3), FlowState is not refinement-consistent: 4.7–4.8% / 6.7%.
+- **Trained HAR per-observation models, pre-registered rule-matched conditions.** Median logit change 2.1–4.9e-3 in float32, of which 1.5–3.5e-3 is at the same physical times. Flip rate ≤ 0.10%. The effect is real but practically negligible.
+- **Real downsampling and missing observations.** For per-observation models, the ratio of the twin-vs-lossy change to the native-vs-lossy change is 0.50–1.14. The twin is the same path with different knots, so a large part of their output change comes from where the knots are. For path functionals the ratio is 0 by construction.
 
 ## 1. Question and scope
 
@@ -57,7 +61,7 @@ Code: `src/fxclock/knots.py`, `src/fxclock/prep.py`, `src/fxclock/conditions.py`
 | Lossless knot refinement (ZOH) | virtual knots carrying the right-held value | unchanged for right-hold ZOH (the hold implied by h_k = Ā(dt_k)h_{k−1} + B̄(dt_k)u_k) | `zoh_m2` |
 | Real downsampling | every M-th measured knot | changes; aliasing possible, not recoverable (`docs/THEORY.md` §0) | `down2` (25 Hz), `down4` (12.5 Hz) |
 | Missing observations | measured interior knots dropped independently (first and last kept) | changes | `drop30`, `drop50`, `drop70` |
-| Re-knotted twins | same path as `down2` / `drop50`, plus virtual knots at the native times | same as the lossy parent | `down2_reknot`, `drop50_reknot` |
+| Re-knotted twins | the lossy parent (`down2` / `drop50`) plus virtual knots at the native times, placed with FOH (pre-registered) or ZOH (added in D7) | same path as the lossy parent *for the rule used to place the knots* | `down2_reknot`, `drop50_reknot` (FOH); `down2_reknot_zoh`, `drop50_reknot_zoh` (ZOH) |
 
 A lossless refinement is lossless only for the rule used to place the knots. Each model is tested under the refinement that is lossless for *its own* input rule, and under the other one.
 
@@ -90,8 +94,9 @@ A lossless refinement is lossless only for the rule used to place the knots. Eac
 **Reading.**
 
 - A per-observation nonlinearity forces intermediate signals to be sampled at the observation knots. That makes the representation grid-dependent even when every linear part is exact and dt-scaled.
-- For a linear stack, the same dependence can be removed by exact cascade integration. For a nonlinear stack it cannot in closed form.
-- `docs/THEORY.md` S2 proves the FOH case: invariance for all inputs ⇔ σ affine. The principle is known in operator learning (SNO, ReNO, CNO; `RELATED_WORK.md`).
+- For a linear stack, the same dependence can be removed by exact cascade integration. For a nonlinear stack no closed form is known to us.
+- `docs/THEORY.md` S2 states the FOH case: invariance for all inputs ⇔ σ affine. This is STANDARD: a characterisation of affine maps, and an instance of the operator-learning principle in SNO, ReNO and CNO (`RELATED_WORK.md`).
+- The inter-layer re-hold mechanism is also acknowledged in FlowState App. B.1's multi-layer remark (a "fresh ZOH discretization error introduced at each subsequent SSM layer"). What is measured here is its size under exactly lossless refinement.
 
 ## 4. Minimal model and its numerical checks
 
@@ -101,7 +106,7 @@ A lossless refinement is lossless only for the rule used to place the knots. Eac
 
 | Check | Result |
 |---|---|
-| φ1, φ2 vs mpmath (60 digits), \|z\| from 1e-14 to 3e2, 7 angles | ≤ 2e-14 relative (float64) |
+| φ1, φ2 vs mpmath (50 digits in the test; 60 in `run_numerics.py`), \|z\| from 1e-14 to 3e2, 7 angles | ≤ 2e-14 relative (float64) |
 | ZOH stem vs N1 exact ZOH (`n1ref.run_scan zoh_dt`) on N1's jittered grid | ≤ 1e-13 |
 | ZOH stem vs N1 independent RK4 (`n1ref.ct_held`) | ≤ 1e-9 |
 | FOH stem vs an independent RK4 on the FOH path | ≤ 1e-10 |
@@ -135,9 +140,13 @@ A lossless refinement is lossless only for the rule used to place the knots. Eac
 
 Scripts `scripts/flowstate_probe.py` (FS1), `flowstate_attribution.py` (FS2) and `flowstate_fp64_layers.py` (FS3); table `results/flowstate_summary.md`.
 
-**Setup.** ETTm1 column OT at 15-minute sampling, which is FlowState's own benchmark family. There are 16 context windows ending in the standard test period, with context L = 1024 and horizon H = 96. The scale factor is s = `get_fixed_factor("15T")` = 0.25. Refinement by r uses s/r; downsampling by r uses s·r. This follows the paper's rule. Forecasts are compared at common physical future times. Repeating the native run gives an exactly identical output (change 0).
+**Setup.** ETTm1 column OT at 15-minute sampling, which is FlowState's own benchmark family. There are 16 context windows, with ends evenly spaced from the start of the standard 12/4/4 test period to the end of the file. Eight of them end after the standard test end, in data that the standard split does not use. Context L = 1024, horizon H = 96. The scale factor is s = `get_fixed_factor("15T")` = 0.25. Refinement by r uses s/r; downsampling by r uses s·r. This follows the paper's rule. Forecasts are compared at common physical future times. Repeating the native run gives an exactly identical output (change 0).
 
-**The test that matches FlowState's own claim is ZOH repeat.** Every sample is repeated r times. That is lossless for the kernel x_k = Ā x_{k−1} + B̄ u_k, including the implicit one-step hold of the first sample (deviation D4). Under it the first S5 layer is exact by FlowState App. B.1, which says the pointwise operations "do not introduce additional temporal discretization error".
+**Pre-registered test and post-hoc change (deviation D11).**
+
+- The pre-registered FS1 test was FOH virtual knots, with the criterion "refinement-consistent if the relative forecast change is ≤ 1e-3". Its outcome is 4.7–4.8% (v1.0) and 6.7% (r1.1), so FlowState is **not refinement-consistent** under the pre-registered test.
+- During the analysis it became clear that FOH knots are not lossless for FlowState's own ZOH rule. The ZOH-repeat condition was therefore added post hoc. Every sample is repeated r times, which is lossless for the kernel x_k = Ā x_{k−1} + B̄ u_k, including the implicit one-step hold of the first sample (D4). Under it the first S5 layer is exact.
+- FS2 and FS3 are also post hoc.
 
 FS1. Relative change of the median forecast at common physical times, and of the last encoder state, vs native. Median [min, max] over windows. zohR = every sample repeated r times, lossless for FlowState's own right-hold ZOH kernel; refine = FOH virtual knots; down = every r-th real sample (lossy).
 
@@ -188,16 +197,19 @@ FS3. Encoder in float32 vs float64 (weights cast), ZOH repeat x2, fixed RevIN st
 
 **Reading.**
 
-1. **The forecast changes.** Under a refinement that is lossless for FlowState's own reconstruction rule, the released models change their forecast by a median 4.2% (v1.0) and 7.0% (r1.1), with a maximum of 24%. The last encoder state changes by 32–45%. This is *larger* than the change under real 2× downsampling (2.2% / 3.9%), where half the measurements are removed.
-2. **Where it comes from (FS3).** In float64, layer 0 is exactly invariant (5.7e-14 / 4.5e-14), and layers 1–5 change by 2%–49%. The values are identical in float32 and float64, so this is not rounding. It is the CE2 mechanism: the per-sample outputs of layer l are re-held as the input of layer l+1.
+1. **The forecast changes.** Under a refinement that is lossless for FlowState's own reconstruction rule, the released models change their forecast by a median 4.2% (v1.0) and 7.0% (r1.1), with a maximum of 24%. The last encoder state changes by 32–45%. The median is *larger* than under real 2× downsampling (2.2% / 3.9%), where half the measurements are removed.
+2. **Where it comes from (FS3, 4 windows, RevIN statistics fixed).** In float64, layer 0 is exactly invariant (5.7e-14 / 4.5e-14), and layers 1–5 change by 2%–49%. The values are identical in float32 and float64, so this is not rounding.
+   - This is the inter-layer re-hold mechanism of CE2: the per-sample outputs of layer l are re-held as the input of layer l+1.
+   - FlowState App. B.1's multi-layer remark names this error and bounds it at O(Δ). The contribution here is only its measured size at native Δ.
+   - With the shipped causal RevIN, layer 0 already changes by 0.1–0.2% (FS2).
 3. **Not the normalisation (FS2).** Replacing the causal (sample-count) RevIN statistics with fixed ones leaves the effect in place: 5.1% / 12.4% forecast change.
-4. **Accuracy moves in both directions.** Forecast accuracy is not systematically hurt or helped by refinement. MAE goes 0.678 → 0.741 for v1.0 and 0.988 → 0.859 for r1.1. The representation depends on the grid; that dependence is not an error signal.
-5. **Scope.** This is a descriptive probe of one series and 16 windows, with inference only. FlowState's paper claims only *approximate* equivariance, with an error that vanishes as Δ → 0. The probe does not contradict that bound. It contradicts the App. B.1 sentence and quantifies the approximation at the native rate.
+4. **Accuracy.** MAE was recorded only for FOH virtual knots, which are not lossless for FlowState: median over windows 0.678 → 0.741 (v1.0), 0.988 → 0.859 (r1.1). These are unpaired medians over 16 windows. MAE under the lossless ZOH repeat was not measured. No accuracy conclusion is drawn.
+5. **Scope.** This is a descriptive probe of one series and 16 windows, with inference only. FlowState's paper claims only *approximate* equivariance, with an error that vanishes as Δ → 0; the probe is consistent with that. The App. B.1 sentence on pointwise operations concerns a single layer at a fixed step. The probe does not refute it; it quantifies the multi-layer error that the same appendix acknowledges.
 
 
 ## 6. Real-signal task: UCI-HAR (pre-registered main arm)
 
-All numbers: `results/har_summary.md` and `results/har_summary.json`, generated by `scripts/analyze_har.py`.
+All numbers, including the §6.2 contrasts (`ablation_contrasts`), are in `results/har_summary.md` and `results/har_summary.json`, generated by `scripts/analyze_har.py`, plus `results/har_supplementary.json`.
 
 - **Training.** Native 50 Hz grid only. 15 epochs, AdamW, one shared setting per family, best dev epoch. 3 seeds.
 - **Test.** 2947 windows from 9 subjects, disjoint from training.
@@ -251,7 +263,9 @@ Paired over windows, seed-averaged, subject-bootstrap 95% CI, in percentage poin
 
 **Reading.**
 
-- **Fixed clock: helps.** The fixed physical-time clock for the nonlinear updates improves robustness to missing observations. This holds for every stem and on identical weights.
+- **Fixed clock: helps, with caveats.** For weights trained on the native grid only, clocked inference is more robust to missing observations than zero-shot per-observation dt inference. This holds for every stem and on identical weights.
+  - The switch also moves the stem query times, the linear layers' re-hold and the readout nodes (THEORY S7). The per-observation rule meets dt values never seen in training.
+  - So this is at least partly the known "run at the training grid" effect. Whether grid-augmented training removes it is untested (AUG arm NOT_RUN, D10).
 - **Exact stem: does not help.** The exact FOH stem adds nothing measurable over a ZOH stem or over no stem at all. The mandatory baseline, point resampling onto the clock, is the best model overall.
 
 ### 6.3 Consistency under lossless refinement (float32, full test set)
@@ -281,22 +295,34 @@ Each cell is the median relative logit change vs native / flip rate. The fp64 co
 
 - **H1 (exactness): PASS.** Every path functional changes by ≤ 2.2e-14 in float64 and flips 0 predictions in float32. The float32 floor of the exact-stem models is 6–7e-8.
 - **Exactness is shared by all path functionals.** Plain fixed-grid resampling is *exactly* invariant too (0.0), so exactness is not a contribution of the exact stem (THEORY S1).
-- **H2 (per-observation dependence): numerically PASS, practically FAIL.** The per-observation models change by a median 2.1–6.2e-3 (float64: 2.6–5.6e-3), which is ≥ 1e-3 and ≈ 10⁵× the float32 floor. But flip rates are ≤ 0.21%, below the pre-registered 0.5% relevance bar, and accuracy changes by ≤ 0.1 pp.
-- **Artifact share (rule-matched twins, D7).**
-  - Per-observation models: 0.50–1.14 under down2 / drop50. Most of their output change under lossy grids is a knot artifact rather than information loss.
-  - Every fixed-clock model, including A2 with the ZOH stem under its own rule: 0.
+- **H2 (per-observation dependence): numerically PASS, practically FAIL.**
+  - The pre-registered conditions are each lossless for the model's own rule: A1 under foh_m2/m4/rand; A3 and B_dtonly under zoh_m2.
+  - Under them the per-observation models change by a median 2.1–4.9e-3 in float32 (float64, 256 windows: 2.6–5.6e-3). That is ≥ 1e-3 and (3–8)×10⁴× the float32 floor.
+  - The p95 is 2.0–3.5e-2, about 7× the median.
+  - Flip rates are ≤ 0.10% (≤ 0.21% if cross-rule refinements such as B_dtonly under foh_m4 are included), below the pre-registered 0.5% relevance bar. Accuracy changes by ≤ 0.1 pp.
+- **H3 (bilinear stem not exact): PASS.** Median 2.5e-3 ≥ 1e-4 under foh_m4.
+- **Twin-to-native change ratio**, Σ|F(lossy) − F(twin)| / Σ|F(lossy) − F(native)| with rule-matched twins (the pre-registered "artifact share", revised post hoc in D7).
+  - It is a ratio of non-additive L1 norms, not a fraction.
+  - Per-observation models: 0.50–1.14 under down2 / drop50. Re-knotting the same path changes their output about as much as the lossy grid change does.
+  - Path functionals: 0 by construction. A2 under its own ZOH rule: 0.
+  - The bilinear-stem model is not a path functional: 0.92 / 0.19.
 
 **H2 decomposition (post hoc, D7; `results/har_supplementary.json`).** The per-observation readout is a time-weighted Riemann sum over knots, so part of the change is quadrature. Median over windows, then over seeds, float32 full test set:
 
 | model | condition | full | same physical times | readout control (grid-free) | float64 full / same times (256 windows) |
 |---|---|---|---|---|---|
-| A1_foh_perobs | foh_m2 | 3.3e-3 | 2.3e-3 | 1.3e-3 | 3.9e-3 / 2.5e-3 |
-| A1_foh_perobs | foh_m4 | 4.9e-3 | 3.5e-3 | 1.9e-3 | 5.6e-3 / 4.0e-3 |
+| A1_foh_perobs | foh_m2 | 3.2e-3 | 2.3e-3 | 1.3e-3 | 3.9e-3 / 2.5e-3 |
+| A1_foh_perobs | foh_m4 | 4.6e-3 | 3.5e-3 | 1.9e-3 | 5.6e-3 / 4.0e-3 |
 | A1_foh_perobs | foh_rand | 2.1e-3 | 1.5e-3 | 0.9e-3 | 2.6e-3 / 1.6e-3 |
-| A3_zoh_perobs | zoh_m2 | 3.1e-3 | 1.8e-3 | 0 | 3.4e-3 / — |
-| B_dtonly | zoh_m2 | 4.1e-3 | 1.7e-3 | 0 | 5.0e-3 / — |
+| A3_zoh_perobs | zoh_m2 | 3.1e-3 | 1.8e-3 | ~3e-16 | 3.4e-3 / 2.4e-3 |
+| B_dtonly | zoh_m2 | 3.7e-3 | 1.7e-3 | ~3e-16 | 5.0e-3 / 2.4e-3 |
 
-The representation itself changes at the same physical times, by 1.5–3.5e-3, which is above the 1e-3 threshold. A readout-quadrature term of similar size comes on top. For right-hold models under ZOH refinement the control is 0, because a held grid-free signal pools identically.
+**Reading the decomposition.**
+
+- The components are not additive.
+- The representation itself changes at the same physical times, by 1.5–3.5e-3, which is above the 1e-3 threshold.
+- For A1 (FOH), a grid-free readout-quadrature term of similar size comes on top.
+- For the right-hold models under ZOH refinement, the grid-free control is 0, because a held grid-free signal pools identically. There, the rest of the full change is the refined representation at the virtual knots departing from its held value, not a quadrature artifact.
 
 ### 6.4 Cost including preprocessing (µs per window, 1 thread)
 
@@ -323,7 +349,7 @@ The representation itself changes at the same physical times, by 1.5–3.5e-3, w
 
 - The exact stem makes a clocked model 2.0× (Δc = 0.02 s) to 3.2× (Δc = 0.08 s) more expensive than point resampling at the same clock.
 - The stem's cost scales with the number of segments: ×2.7 under foh_m4, while the backbone cost does not grow.
-- Per-observation models scale with the number of knots, ×6–7 under foh_m4. On irregular grids (drop50) they are 10–14× slower than native, because the LTI/FFT path is no longer available and the time-varying scan is needed.
+- Per-observation models scale with the number of knots, ×6–7 under foh_m4. On irregular grids (drop50) they are 9–14× slower than native, because the LTI/FFT path is no longer available and the time-varying scan is needed.
 - Clocked models always run the LTI path.
 - Training seconds per epoch are in `results/har_summary.json` (`epoch_seconds_median_contended`). They were measured under 4–6-process contention and are indicative only.
 
@@ -334,13 +360,13 @@ Evaluated in code (`results/har_summary.json` → `decision`).
 | Criterion | Result |
 |---|---|
 | **G1**: P1 or P4 beats *every* simple-resampling baseline within 1.5× its cost by ≥ 1.0 pp lossy mean (CI > 0) and ≥ −0.5 pp native | **FAIL.** P1 is below B_point_clock1 (−0.64) and B_binmean_clock4 (−0.07), is not ≥ 1 pp above B_point_clock4 (+0.25) or B_patch_clock4 (+0.46), and meets the G1 margin only against the two Transformer baselines. P4 is below B_point_clock1 (−1.24), B_point_clock4 (−0.35), B_binmean_clock4 (−0.68) and B_patch_clock4 (−0.15) |
-| **G2 (literature)**: no prior work with "substantial" overlap | **FAIL.** More than 20 sources after adversarial re-check; five have "full" overlap on the fixed-time-nonlinearity component |
-| **G2 (close work)**: NRDE-, RFormer- and bilinear-style baselines not within 1.0 pp | **FAIL.** The bilinear multirate-style stem is within 1.0 pp (P1 +0.79, P4 +0.18). P beats our NRDE/RFormer-style implementations by 7–10 pp, but these are not the published models |
+| **G2 (literature)**: no prior work with "substantial" overlap | **FAIL.** 18 distinct sources (27 verification records) after adversarial re-check. Six have "full" overlap on the fixed-time-nonlinearity component: RFormer, torchcde `logsig_windows`, Walker 2026, SFI non-integer strides, Berner 2025, IP-Nets |
+| **G2 (close work)**: NRDE-, RFormer- and bilinear-style baselines not within 1.0 pp | **FAIL.** The bilinear multirate-style stem is within 1.0 pp (P1 +0.79, P4 +0.18). P beats our NRDE/RFormer-style implementations by 6.9–10.5 pp, but these are not the published models |
 | **Verdict** | **NO_GO.** The gain is explained by simple resampling and by prior work |
 
 **What the NO_GO does not say.**
 
-- It does not say that the fixed clock is useless. Nonlinear updates on a fixed physical clock are measurably more robust to missing observations than per-observation updates with dt rescaling (§6.2).
+- It does not say that the fixed clock is useless. For native-trained weights, clocked inference is measurably more robust to missing observations than zero-shot per-observation inference (§6.2). Whether this survives grid-augmented training is untested.
 - It says that this is achieved as well, and more cheaply, by fixed-grid resampling. That construction is standard (IP-Nets, mTAN, HiSS, Hasegawa et al. 2021 for HAR; `RELATED_WORK.md`).
 
 ## 8. Claims ledger
@@ -349,11 +375,11 @@ Evaluated in code (`results/har_summary.json` → `decision`).
 |---|---|---|---|
 | C0 | Exact ZOH/FOH integration is invariant to interval splitting; stable φ-functions; Grönwall and interpolation bounds | STANDARD (K1–K4) | tests; `docs/THEORY.md` §1 |
 | C1 | A model that factors through R(O) on a fixed clock is exactly refinement-invariant. This includes plain fixed-grid resampling | PROVED (elementary, low novelty; S1) | HAR H1: all path functionals ≤ 2.2e-14 (float64) |
-| C2 | Per-knot σ with FOH re-reconstruction is refinement-invariant for all inputs ⇔ σ affine | PROVED (elementary; S2). The principle is known in operator learning (SNO/ReNO/CNO) | CE1: 1/2 → 3/8 |
-| C3 | In per-observation stacks the grid dependence comes from per-knot re-sampling of intermediate signals. It is present even for σ = identity and removable by exact cascade integration only in the linear case | NUMERICALLY SHOWN (CE2); SKETCH for the general bound (S3) | CE2: 0.19–0.35 (GELU), 0.22–0.40 (identity), cascade ≤ 6.1e-15 |
-| C4 | FlowState's App. B.1 statement "pointwise operations … do not introduce additional temporal discretization error" is false for its multi-layer released models | MEASURED on released weights (FS1–FS3; 16 windows of one series) | layer 0: 5.7e-14 (float64); layers 1–5: 2–49%; forecast 4.2% / 7.0% |
-| C5 | Trained per-observation SSMs on HAR change under lossless refinement by 2–6e-3, of which 1.5–3.5e-3 is at the same physical times, and flip ≤ 0.21% | MEASURED (3 seeds; subject-disjoint test) | §6.3 |
-| C6 | With identical weights, nonlinear updates on a fixed clock are more robust to missing observations than per-observation updates | MEASURED | §6.2: +0.49 to +0.80 pp lossy mean, CI > 0 |
+| C2 | Per-knot σ with FOH re-reconstruction is refinement-invariant for all inputs ⇔ σ affine | STANDARD: a characterisation of affine maps (Jensen); an instance of K8 (SNO/ReNO/CNO). Not a contribution | CE1: 1/2 → 3/8 |
+| C3 | In per-observation stacks the grid dependence comes from per-knot re-sampling of intermediate signals. It is present even for σ = identity and removable by exact cascade integration only in the linear case | NUMERICALLY SHOWN (CE2); SKETCH for the general bound (S3). The mechanism is acknowledged in FlowState App. B.1 (multi-layer remark) | CE2: 0.19–0.35 (GELU), 0.22–0.40 (identity), cascade ≤ 6.1e-15 |
+| C4 | On released weights, under ZOH-lossless refinement, the multi-layer FlowState encoder is not refinement-invariant. This quantifies at native Δ the inter-layer re-hold error that FlowState App. B.1 acknowledges and bounds at O(Δ). Under the pre-registered FOH test it is not refinement-consistent | MEASURED (FS1: 16 windows of one series; FS2/FS3 post hoc, 8/4 windows) | FS1 forecast 4.2% / 7.0% (ZOH repeat) and 4.7–4.8% / 6.7% (FOH). FS3 with fixed RevIN: layer 0 5.7e-14, layers 1–5 2–49%. FS2 with causal RevIN: layer 0 0.1–0.2% |
+| C5 | Trained per-observation SSMs on HAR change under rule-matched lossless refinement by 2.1–4.9e-3, of which 1.5–3.5e-3 is at the same physical times, and flip ≤ 0.10% | MEASURED (3 seeds; subject-disjoint test) | §6.3 |
+| C6 | With identical native-trained weights, clocked inference is more robust to missing observations than zero-shot per-observation inference | MEASURED, for native-grid training only. The switch also changes linear discretization and readout; augmented training untested | §6.2: +0.49 to +0.80 pp lossy mean, CI > 0 |
 | C7 | The exact FOH stem improves accuracy over ZOH or no stem | **NOT SUPPORTED** | §6.2: +0.29 [−0.10, +0.73]; −0.64 [−1.23, +0.00] vs no stem |
 | C8 | Proposed architecture beats simple resampling (G1) | **REFUTED** on HAR | §7 |
 | C9 | Architecture novelty (G2) | **REFUTED** | `RELATED_WORK.md` |
@@ -377,8 +403,10 @@ Evaluated in code (`results/har_summary.json` → `decision`).
   - The comparison under FOH knots is not lossless for FlowState's rule; only the ZOH-repeat comparison is.
   - The probe tests the App. B.1 sentence, not FlowState's stated O(Δ) approximate equivariance.
 - **Post-hoc analyses.**
-  - The rule-matched twins and the H2 decomposition were added after an adversarial code review (D7).
-  - They correct the pre-registered artifact-share metric; they do not change the decision.
+  - The rule-matched twins and the H2 decomposition were added after an adversarial code review (D7). They correct the pre-registered artifact-share metric and do not change the decision.
+  - The FlowState ZOH-repeat condition and FS2/FS3 were added after pre-registration (D11). The pre-registered FOH outcome is reported alongside them.
+- **Training grid.** All HAR models were trained on the native grid only. The fixed-clock robustness result (C6) may partly be a train/test grid mismatch of the per-observation rule. The pre-registered AUG arm, which would test this, was NOT_RUN (D10).
+- **Compute.** Up to 5–6 processes ran concurrently on 4 cores (D12), so training times are contended. The cost table was measured on an idle machine.
 - **Main-author verification of literature** is limited to abstracts and key sentences of FlowState v3, Walker 2026, Boulanger & Wood 2026 and Colagrande 2026. The rest was read by sub-agents.
 - **Deviations** D1–D10: `docs/DEVIATIONS.md`.
 
