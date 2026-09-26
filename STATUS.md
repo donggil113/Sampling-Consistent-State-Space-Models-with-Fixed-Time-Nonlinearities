@@ -35,7 +35,7 @@ The pre-registered decision rule (`configs/prereg_n2.json`) fails on both criter
 | Minimal counterexample (CE1, exact) | one virtual knot | output 1/2 → 3/8. It is 3/8 for both when σ is on a fixed clock. For FOH re-reconstruction, invariance holds ⇔ σ is affine (`docs/THEORY.md` S2) |
 | 2-layer S5/FlowState-style stack (CE2, float64) | ZOH splitting m = 2…16 | layer 1 exact (≤ 6.8e-15); output change 19–35%. With σ = identity: 22–40% (the cause is per-knot re-sampling of intermediate signals) |
 | **Released FlowState** (ETTm1, 16 windows) | every sample repeated ×2 | forecast change: median 4.2% (v1.0) and 7.0% (r1.1), max 24%. Larger than under real 2× downsampling (2.2% / 3.9%). In float64, layer 0 is exact (5.7e-14) and layers 1–5 change by 2–49%. This contradicts FlowState App. B.1's statement that pointwise ops add no discretization error |
-| Trained HAR per-observation models (3 seeds) | FOH or ZOH virtual knots | median relative logit change 2–6e-3 in float32 (float64 max 2–5e-2). Most of it is a change at the same physical times; the rest is a readout-quadrature term. Flip rate ≤ 0.21%: **numerically real, practically negligible** on HAR |
+| Trained HAR per-observation models (3 seeds) | FOH or ZOH virtual knots | median relative logit change 2–6e-3 in float32 (float64 medians 2.6–5.6e-3). About 40–70% of it is a change at the same physical times (1.5–3.5e-3); the rest is a readout-quadrature term. Flip rate ≤ 0.21%: **numerically real, practically negligible** on HAR |
 
 ## What was done
 

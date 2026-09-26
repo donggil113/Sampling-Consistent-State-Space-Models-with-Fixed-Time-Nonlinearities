@@ -37,6 +37,8 @@ def main():
     ctx = {"t_start": 0.0, "t_end": 127 * NATIVE_DT, "native_dt": NATIVE_DT}
     out = {"n_windows": N_WIN, "repeats": REPEATS, "threads": 1, "rows": []}
     for g, specs in GROUPS.items():
+        if g.startswith("AUG_"):          # secondary arm, NOT_RUN (D10)
+            continue
         ck = f"results/raw/har/{g}__seed0.pt"
         state = torch.load(ck) if os.path.exists(ck) else None
         for name in specs:

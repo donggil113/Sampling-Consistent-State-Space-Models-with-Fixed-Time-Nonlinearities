@@ -46,13 +46,13 @@ Consistency vs native (float32): median relative logit change / flip rate (%). A
 |---|---|---|---|---|---|---|---|---|
 | P1_foh_clock | 6.4e-08 / 0.00 | 6.3e-08 / 0.00 | 6.4e-08 / 0.00 | 2.6e-04 / 0.07 | 2.9e-03 / 0.24 | 8.6e-03 / 1.09 | 0.000 | 0.000 |
 | A1_foh_perobs | 3.3e-03 / 0.08 | 4.9e-03 / 0.10 | 2.1e-03 / 0.10 | 3.1e-03 / 0.06 | 7.0e-03 / 0.35 | 2.0e-02 / 1.72 | 1.143 | 0.835 |
-| A2_zoh_clock | 2.5e-04 / 0.01 | 3.8e-04 / 0.02 | 1.6e-04 / 0.01 | 6.4e-08 / 0.00 | 3.1e-03 / 0.19 | 1.2e-02 / 1.39 | — | — |
-| A3_zoh_perobs | 3.4e-03 / 0.10 | 5.0e-03 / 0.15 | 2.2e-03 / 0.07 | 3.1e-03 / 0.08 | 7.1e-03 / 0.34 | 2.0e-02 / 1.75 | — | — |
+| A2_zoh_clock | 2.5e-04 / 0.01 | 3.8e-04 / 0.02 | 1.6e-04 / 0.01 | 6.4e-08 / 0.00 | 3.1e-03 / 0.19 | 1.2e-02 / 1.39 | 0.000 | 0.000 |
+| A3_zoh_perobs | 3.4e-03 / 0.10 | 5.0e-03 / 0.15 | 2.2e-03 / 0.07 | 3.1e-03 / 0.08 | 7.1e-03 / 0.34 | 2.0e-02 / 1.75 | 0.823 | 0.514 |
 | B_point_clock1 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 4.2e-03 / 0.35 | 1.1e-02 / 1.01 | 0.000 | 0.000 |
-| B_dtonly | 4.3e-03 / 0.19 | 6.2e-03 / 0.21 | 2.6e-03 / 0.10 | 4.1e-03 / 0.09 | 8.1e-03 / 0.35 | 2.4e-02 / 1.47 | — | — |
+| B_dtonly | 4.3e-03 / 0.19 | 6.2e-03 / 0.21 | 2.6e-03 / 0.10 | 4.1e-03 / 0.09 | 8.1e-03 / 0.35 | 2.4e-02 / 1.47 | 0.841 | 0.504 |
 | B_tf_clock1 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 3.1e-03 / 1.00 | 9.9e-03 / 2.40 | 0.000 | 0.000 |
 | P4_foh_clock | 7.0e-08 / 0.00 | 7.0e-08 / 0.00 | 7.0e-08 / 0.00 | 6.2e-04 / 0.08 | 6.4e-04 / 0.07 | 1.2e-02 / 1.11 | 0.000 | 0.000 |
-| A2_zoh_clock4 | 5.0e-04 / 0.09 | 7.4e-04 / 0.16 | 3.8e-04 / 0.05 | 7.0e-08 / 0.00 | 1.2e-03 / 0.12 | 1.7e-02 / 1.79 | — | — |
+| A2_zoh_clock4 | 5.0e-04 / 0.09 | 7.4e-04 / 0.16 | 3.8e-04 / 0.05 | 7.0e-08 / 0.00 | 1.2e-03 / 0.12 | 1.7e-02 / 1.79 | 0.000 | 0.000 |
 | B_point_clock4 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 1.3e-02 / 1.43 | 0.000 | 0.000 |
 | B_binmean_clock4 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 1.7e-03 / 0.12 | 1.2e-03 / 0.14 | 1.0e-02 / 0.93 | 0.000 | 0.000 |
 | B_patch_clock4 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 0.0e+00 / 0.00 | 8.8e-03 / 0.40 | 1.7e-02 / 1.24 | 0.000 | 0.000 |
@@ -66,12 +66,12 @@ float64 max relative logit change over the 256-window subset, max over seeds:
 - P1_foh_clock: foh_m2 3.2e-16, foh_m4 4.3e-16, foh_rand 3.4e-16, zoh_m2 9.8e-03, down2_reknot 0.0e+00
 - A1_foh_perobs: foh_m2 2.9e-02, foh_m4 4.0e-02, foh_rand 3.5e-02, zoh_m2 2.3e-02, down2_reknot 7.1e-02
 - A2_zoh_clock: foh_m2 7.9e-03, foh_m4 1.2e-02, foh_rand 6.4e-03, zoh_m2 4.3e-16, down2_reknot 8.8e-02, down2_reknot_zoh 0.0e+00
-- A3_zoh_perobs: foh_m2 3.3e-02, foh_m4 4.6e-02, foh_rand 3.8e-02, zoh_m2 2.5e-02, down2_reknot 8.4e-02
+- A3_zoh_perobs: foh_m2 3.3e-02, foh_m4 4.6e-02, foh_rand 3.8e-02, zoh_m2 2.5e-02, down2_reknot 8.4e-02, down2_reknot_zoh 7.7e-02
 - B_point_clock1: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00, down2_reknot 0.0e+00
-- B_dtonly: foh_m2 2.3e-02, foh_m4 3.3e-02, foh_rand 2.8e-02, zoh_m2 2.0e-02, down2_reknot 9.7e-02
+- B_dtonly: foh_m2 2.3e-02, foh_m4 3.3e-02, foh_rand 2.8e-02, zoh_m2 2.0e-02, down2_reknot 9.7e-02, down2_reknot_zoh 4.1e-02
 - B_tf_clock1: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00, down2_reknot 0.0e+00
 - P4_foh_clock: foh_m2 4.5e-16, foh_m4 5.0e-16, foh_rand 3.7e-16, zoh_m2 1.9e-02, down2_reknot 4.5e-16
-- A2_zoh_clock4: foh_m2 1.9e-02, foh_m4 2.8e-02, foh_rand 2.5e-02, zoh_m2 5.3e-16, down2_reknot 4.0e-02
+- A2_zoh_clock4: foh_m2 1.9e-02, foh_m4 2.8e-02, foh_rand 2.5e-02, zoh_m2 5.3e-16, down2_reknot 4.0e-02, down2_reknot_zoh 4.3e-16
 - B_point_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00, down2_reknot 0.0e+00
 - B_binmean_clock4: foh_m2 4.1e-16, foh_m4 4.1e-16, foh_rand 4.6e-16, zoh_m2 2.8e-02, down2_reknot 5.1e-16
 - B_patch_clock4: foh_m2 0.0e+00, foh_m4 0.0e+00, foh_rand 0.0e+00, zoh_m2 0.0e+00, down2_reknot 0.0e+00
@@ -88,6 +88,14 @@ H2 decomposition (per-observation rules; medians over windows, then median over 
 | A1_foh_perobs | foh_m4 | 4.61e-03 | 3.47e-03 | 1.91e-03 | 5.62e-03 | 4.04e-03 | 0.14 | 0.10 |
 | A1_foh_perobs | foh_rand | 2.06e-03 | 1.47e-03 | 9.19e-04 | 2.62e-03 | 1.63e-03 | 0.10 | 0.10 |
 | A1_foh_perobs | zoh_m2 | 3.11e-03 | 1.53e-03 | 1.27e-03 | 3.32e-03 | 2.32e-03 | 0.07 | 0.03 |
+| A3_zoh_perobs | foh_m2 | 3.39e-03 | 2.45e-03 | 3.12e-16 | 3.99e-03 | 2.71e-03 | 0.10 | 0.07 |
+| A3_zoh_perobs | foh_m4 | 4.83e-03 | 3.50e-03 | 4.49e-16 | 5.78e-03 | 3.92e-03 | 0.14 | 0.14 |
+| A3_zoh_perobs | foh_rand | 2.15e-03 | 1.53e-03 | 2.59e-16 | 2.52e-03 | 1.66e-03 | 0.07 | 0.07 |
+| A3_zoh_perobs | zoh_m2 | 3.12e-03 | 1.81e-03 | 3.12e-16 | 3.40e-03 | 2.44e-03 | 0.07 | 0.03 |
+| B_dtonly | foh_m2 | 4.18e-03 | 2.54e-03 | 3.37e-16 | 5.14e-03 | 2.64e-03 | 0.10 | 0.10 |
+| B_dtonly | foh_m4 | 6.00e-03 | 3.68e-03 | 4.68e-16 | 7.54e-03 | 3.98e-03 | 0.14 | 0.10 |
+| B_dtonly | foh_rand | 2.74e-03 | 1.72e-03 | 2.79e-16 | 2.97e-03 | 1.55e-03 | 0.10 | 0.10 |
+| B_dtonly | zoh_m2 | 3.75e-03 | 1.73e-03 | 3.37e-16 | 4.97e-03 | 2.39e-03 | 0.03 | 0.07 |
 
 Paired differences (pp), proposed minus other, on common seeds; subject-bootstrap 95% CI:
 
@@ -119,6 +127,75 @@ Paired differences (pp), proposed minus other, on common seeds; subject-bootstra
 - P4_foh_clock - B_dtonly: lossy mean -0.75 [-1.65, +0.24]; native -0.85 [-1.83, +0.23]
 - P4_foh_clock - A1_foh_perobs: lossy mean +0.19 [-1.42, +1.86]; native -0.44 [-1.81, +0.99]
 - P4_foh_clock - A3_zoh_perobs: lossy mean +0.35 [-1.33, +2.08]; native -0.36 [-1.85, +1.15]
+
+Cost including preprocessing (idle machine, 1 thread, 512 test windows; microseconds per window):
+
+| model | params | cond | mean length | prep | forward | total |
+|---|---|---|---|---|---|---|
+| P1_foh_clock | 56582 | native | 127 | 194 | 2472 | 2666 |
+| P1_foh_clock | 56582 | foh_m4 | 127 | 554 | 6707 | 7261 |
+| P1_foh_clock | 56582 | down2 | 127 | 222 | 2151 | 2373 |
+| P1_foh_clock | 56582 | drop50 | 127 | 228 | 2217 | 2444 |
+| A1_foh_perobs | 56582 | native | 127 | 189 | 2642 | 2830 |
+| A1_foh_perobs | 56582 | foh_m4 | 508 | 599 | 16610 | 17208 |
+| A1_foh_perobs | 56582 | down2 | 63 | 201 | 1250 | 1452 |
+| A1_foh_perobs | 56582 | drop50 | 64 | 221 | 28233 | 28454 |
+| A2_zoh_clock | 56582 | native | 127 | 122 | 2198 | 2320 |
+| A2_zoh_clock | 56582 | foh_m4 | 127 | 366 | 4378 | 4744 |
+| A2_zoh_clock | 56582 | down2 | 127 | 145 | 2219 | 2364 |
+| A2_zoh_clock | 56582 | drop50 | 127 | 153 | 2331 | 2484 |
+| A3_zoh_perobs | 56582 | native | 127 | 121 | 2696 | 2818 |
+| A3_zoh_perobs | 56582 | foh_m4 | 508 | 422 | 16070 | 16492 |
+| A3_zoh_perobs | 56582 | down2 | 63 | 144 | 1308 | 1453 |
+| A3_zoh_perobs | 56582 | drop50 | 64 | 143 | 25446 | 25589 |
+| B_point_clock1 | 51846 | native | 127 | 92 | 1228 | 1320 |
+| B_point_clock1 | 51846 | foh_m4 | 127 | 334 | 1262 | 1597 |
+| B_point_clock1 | 51846 | down2 | 127 | 103 | 1218 | 1321 |
+| B_point_clock1 | 51846 | drop50 | 127 | 111 | 1176 | 1288 |
+| B_dtonly | 51846 | native | 127 | 86 | 1688 | 1775 |
+| B_dtonly | 51846 | foh_m4 | 508 | 337 | 12092 | 12430 |
+| B_dtonly | 51846 | down2 | 63 | 124 | 832 | 956 |
+| B_dtonly | 51846 | drop50 | 64 | 116 | 24700 | 24816 |
+| B_tf_clock1 | 135046 | native | 127 | 91 | 1328 | 1419 |
+| B_tf_clock1 | 135046 | foh_m4 | 127 | 322 | 1288 | 1610 |
+| B_tf_clock1 | 135046 | down2 | 127 | 114 | 1252 | 1366 |
+| B_tf_clock1 | 135046 | drop50 | 127 | 116 | 1246 | 1362 |
+| P4_foh_clock | 56582 | native | 31 | 203 | 1284 | 1487 |
+| P4_foh_clock | 56582 | foh_m4 | 31 | 482 | 3509 | 3991 |
+| P4_foh_clock | 56582 | down2 | 31 | 198 | 819 | 1018 |
+| P4_foh_clock | 56582 | drop50 | 31 | 234 | 954 | 1189 |
+| A2_zoh_clock4 | 56582 | native | 31 | 121 | 1196 | 1317 |
+| A2_zoh_clock4 | 56582 | foh_m4 | 31 | 339 | 3281 | 3620 |
+| A2_zoh_clock4 | 56582 | down2 | 31 | 138 | 801 | 939 |
+| A2_zoh_clock4 | 56582 | drop50 | 31 | 140 | 969 | 1110 |
+| B_point_clock4 | 51846 | native | 31 | 78 | 388 | 466 |
+| B_point_clock4 | 51846 | foh_m4 | 31 | 281 | 389 | 670 |
+| B_point_clock4 | 51846 | down2 | 31 | 100 | 400 | 500 |
+| B_point_clock4 | 51846 | drop50 | 31 | 107 | 398 | 506 |
+| B_binmean_clock4 | 52422 | native | 31 | 242 | 398 | 640 |
+| B_binmean_clock4 | 52422 | foh_m4 | 31 | 609 | 402 | 1011 |
+| B_binmean_clock4 | 52422 | down2 | 31 | 245 | 418 | 663 |
+| B_binmean_clock4 | 52422 | drop50 | 31 | 325 | 420 | 745 |
+| B_patch_clock4 | 53574 | native | 31 | 118 | 390 | 507 |
+| B_patch_clock4 | 53574 | foh_m4 | 31 | 326 | 390 | 716 |
+| B_patch_clock4 | 53574 | down2 | 31 | 138 | 402 | 540 |
+| B_patch_clock4 | 53574 | drop50 | 31 | 142 | 389 | 531 |
+| B_tfpatch_clock4 | 136774 | native | 31 | 134 | 230 | 364 |
+| B_tfpatch_clock4 | 136774 | foh_m4 | 31 | 353 | 226 | 580 |
+| B_tfpatch_clock4 | 136774 | down2 | 31 | 146 | 233 | 379 |
+| B_tfpatch_clock4 | 136774 | drop50 | 31 | 151 | 230 | 382 |
+| B_nrde_clock4 | 121254 | native | 31 | 510 | 188 | 697 |
+| B_nrde_clock4 | 121254 | foh_m4 | 31 | 1419 | 190 | 1609 |
+| B_nrde_clock4 | 121254 | down2 | 31 | 535 | 250 | 785 |
+| B_nrde_clock4 | 121254 | drop50 | 31 | 543 | 197 | 739 |
+| B_rformer_clock4 | 141510 | native | 31 | 660 | 236 | 896 |
+| B_rformer_clock4 | 141510 | foh_m4 | 31 | 1631 | 239 | 1870 |
+| B_rformer_clock4 | 141510 | down2 | 31 | 587 | 240 | 827 |
+| B_rformer_clock4 | 141510 | drop50 | 31 | 615 | 249 | 864 |
+| B_bilin_clock4 | 56582 | native | 31 | 210 | 570 | 780 |
+| B_bilin_clock4 | 56582 | foh_m4 | 31 | 549 | 1070 | 1619 |
+| B_bilin_clock4 | 56582 | down2 | 31 | 194 | 462 | 656 |
+| B_bilin_clock4 | 56582 | drop50 | 31 | 214 | 551 | 765 |
 
 ## Hypotheses and decision (evaluated in code)
 
@@ -216,18 +293,18 @@ Paired differences (pp), proposed minus other, on common seeds; subject-bootstra
       "zoh_m2": 0.0030566529618759374
      },
      "median_fp64_subset": {
-      "zoh_m2": null
+      "zoh_m2": 0.0033952695421548412
      },
      "same_times_fp32": {
-      "zoh_m2": null
+      "zoh_m2": 0.0018127816414282042
      },
      "readout_control_fp32": {
-      "zoh_m2": null
+      "zoh_m2": 3.1186712594265117e-16
      },
      "flip_rate": {
       "zoh_m2": 0.000791765637371338
      },
-     "numeric_pass": false,
+     "numeric_pass": true,
      "practical_pass": false
     },
     "B_dtonly": {
@@ -235,22 +312,22 @@ Paired differences (pp), proposed minus other, on common seeds; subject-bootstra
       "zoh_m2": 0.004088584246166387
      },
      "median_fp64_subset": {
-      "zoh_m2": null
+      "zoh_m2": 0.004967979256500183
      },
      "same_times_fp32": {
-      "zoh_m2": null
+      "zoh_m2": 0.0017334210392425267
      },
      "readout_control_fp32": {
-      "zoh_m2": null
+      "zoh_m2": 3.3653292576700214e-16
      },
      "flip_rate": {
       "zoh_m2": 0.0009048750141386721
      },
-     "numeric_pass": false,
+     "numeric_pass": true,
      "practical_pass": false
     }
    },
-   "numeric_pass": false,
+   "numeric_pass": true,
    "practical_pass": false
   },
   "H3_stem_bilinear": {
@@ -260,8 +337,141 @@ Paired differences (pp), proposed minus other, on common seeds; subject-bootstra
  },
  "decision": {
   "G1_beats_simple_resampling": {
-   "per_proposed": {},
-   "pass": null
+   "per_proposed": {
+    "P1_foh_clock": {
+     "own_cost_us": 2665.6317734392587,
+     "comparators_within_1.5x_cost": {
+      "B_point_clock1": {
+       "cost_ratio": 0.49525385804486777,
+       "lossy_diff_pp": -0.6356746974324171,
+       "lossy_ci95_pp": [
+        -1.2313755945819571,
+        0.004633379627795874
+       ],
+       "native_diff_pp": -0.4071937563624025,
+       "beats": false
+      },
+      "B_point_clock4": {
+       "cost_ratio": 0.17465031456197996,
+       "lossy_diff_pp": 0.25336500395882805,
+       "lossy_ci95_pp": [
+        -0.43543278123119206,
+        0.8900650253643142
+       ],
+       "native_diff_pp": 0.44112656939260264,
+       "beats": false
+      },
+      "B_binmean_clock4": {
+       "cost_ratio": 0.240077033566315,
+       "lossy_diff_pp": -0.07012781359574717,
+       "lossy_ci95_pp": [
+        -1.0138067347096575,
+        0.9203635919797603
+       ],
+       "native_diff_pp": -0.0678656260604004,
+       "beats": false
+      },
+      "B_patch_clock4": {
+       "cost_ratio": 0.19037188510501318,
+       "lossy_diff_pp": 0.4592240696753762,
+       "lossy_ci95_pp": [
+        -1.7326732673267324,
+        2.7369658415626463
+       ],
+       "native_diff_pp": 0.4411265693926027,
+       "beats": false
+      },
+      "B_tf_clock1": {
+       "cost_ratio": 0.5323040005622942,
+       "lossy_diff_pp": 4.010858500169665,
+       "lossy_ci95_pp": [
+        2.295219343578127,
+        6.090856680007621
+       ],
+       "native_diff_pp": 4.173736002714626,
+       "beats": true
+      },
+      "B_tfpatch_clock4": {
+       "cost_ratio": 0.1364618660236265,
+       "lossy_diff_pp": 2.106096595407759,
+       "lossy_ci95_pp": [
+        0.897797197766249,
+        4.03317778978876
+       ],
+       "native_diff_pp": 2.1038344078724123,
+       "beats": true
+      }
+     },
+     "pass": false
+    },
+    "P4_foh_clock": {
+     "own_cost_us": 1486.8095585924834,
+     "comparators_within_1.5x_cost": {
+      "B_point_clock1": {
+       "cost_ratio": 0.8879176302663365,
+       "lossy_diff_pp": -1.2419409569053277,
+       "lossy_ci95_pp": [
+        -2.3761906434026265,
+        0.05402764789949837
+       ],
+       "native_diff_pp": -0.8483203257550053,
+       "beats": false
+      },
+      "B_point_clock4": {
+       "cost_ratio": 0.3131224339035727,
+       "lossy_diff_pp": -0.3529012555140823,
+       "lossy_ci95_pp": [
+        -1.4617742710159773,
+        0.7248709008141009
+       ],
+       "native_diff_pp": -1.5069196126571518e-16,
+       "beats": false
+      },
+      "B_binmean_clock4": {
+       "cost_ratio": 0.43042295837352573,
+       "lossy_diff_pp": -0.6763940730686577,
+       "lossy_ci95_pp": [
+        -1.8449229738045008,
+        0.4905688146054677
+       ],
+       "native_diff_pp": -0.5089921954530033,
+       "beats": false
+      },
+      "B_patch_clock4": {
+       "cost_ratio": 0.3413089072321065,
+       "lossy_diff_pp": -0.14704218979753422,
+       "lossy_ci95_pp": [
+        -1.7357491007541994,
+        1.439401092670996
+       ],
+       "native_diff_pp": -3.0138392253143034e-17,
+       "beats": false
+      },
+      "B_tf_clock1": {
+       "cost_ratio": 0.9543431092620458,
+       "lossy_diff_pp": 3.404592240696754,
+       "lossy_ci95_pp": [
+        1.080290591803822,
+        5.891520583747317
+       ],
+       "native_diff_pp": 3.7326094333220228,
+       "beats": true
+      },
+      "B_tfpatch_clock4": {
+       "cost_ratio": 0.24465613893399205,
+       "lossy_diff_pp": 1.499830335934849,
+       "lossy_ci95_pp": [
+        -0.4603307498484995,
+        3.800530290922354
+       ],
+       "native_diff_pp": 1.66270783847981,
+       "beats": false
+      }
+     },
+     "pass": false
+    }
+   },
+   "pass": false
   },
   "G2_not_prior_work": {
    "literature_pass": false,

@@ -121,6 +121,8 @@ def main():
     costs = {}
     if cost:
         for r in cost["rows"]:
+            if r["group"].startswith("AUG_"):   # AUG arm was not run; its rows are random-init timings (duplicates)
+                continue
             costs.setdefault(r["model"], {})[r["condition"]] = r
     out["cost"] = costs
 
