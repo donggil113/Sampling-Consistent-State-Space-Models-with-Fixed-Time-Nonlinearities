@@ -16,7 +16,9 @@ import numpy as np
 import torch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from fxclock.conditions import CONDITIONS  # noqa: E402
+from fxclock import knots as K  # noqa: E402
+from fxclock.conditions import CONDITIONS, apply  # noqa: E402
+from fxclock.prep import prep_window  # noqa: E402
 from fxclock.data_har import NATIVE_DT, dev_subjects, load  # noqa: E402
 from fxclock.models import SPECS, Net  # noqa: E402
 from fxclock.train import predict, prep_all, train  # noqa: E402
@@ -38,7 +40,13 @@ GROUPS = {
     "G_nrde4": ["B_nrde_clock4"],
     "G_rformer4": ["B_rformer_clock4"],
     "G_bilin4": ["B_bilin_clock4"],
+    # secondary AUG arm: trained on randomly changed grids, so every rule is trained separately
+    "AUG_P1": ["P1_foh_clock"],
+    "AUG_A3": ["A3_zoh_perobs"],
+    "AUG_pt1": ["B_point_clock1"],
+    "AUG_dtonly": ["B_dtonly"],
 }
+AUG_CONDS = ["native", "foh_m2", "zoh_m2", "down2", "drop30"]
 
 
 def sha(path):
@@ -113,7 +121,15 @@ def main():
         rec["eval_only_git_head"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     else:
         t0 = time.perf_counter()
-        hist, best_dev = train(net, tr_items, ytr, dv_items, ydv, cfg, a.seed, log=log)
+        items_for_epoch = None
+        if a.group.startswith("AUG_"):
+            def items_for_epoch(ep):
+                rng = np.random.default_rng([a.seed, 7777, ep])
+                pick = rng.integers(0, len(AUG_CONDS), Xtr.shape[0])
+                return [prep_window(apply(AUG_CONDS[pick[i]], K.from_uniform(Xtr[i], NATIVE_DT), 10_000_000 * (ep + 1) + i),
+                                    train_spec, ctx) for i in range(Xtr.shape[0])]
+            log(f"AUG arm: per-epoch training grids drawn uniformly from {AUG_CONDS}")
+        hist, best_dev = train(net, tr_items, ytr, dv_items, ydv, cfg, a.seed, log=log, items_for_epoch=items_for_epoch)
         t_train = time.perf_counter() - t0
     rec = rec if a.eval_only else {"group": a.group, "seed": a.seed, "pilot": a.pilot, "cfg": cfg, "n_params": n_params, "best_dev_acc": best_dev,
            "history": hist, "train_seconds": t_train, "prep_train_seconds": tp_tr, "threads": a.threads,

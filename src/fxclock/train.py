@@ -39,7 +39,8 @@ def predict(net, items, bs, dtype=torch.float32, force_scan=True):
     return torch.cat(outs).numpy()
 
 
-def train(net, tr_items, ytr, dev_items, ydev, cfg, seed, log=print):
+def train(net, tr_items, ytr, dev_items, ydev, cfg, seed, log=print, items_for_epoch=None):
+    """items_for_epoch(ep) -> list of items: optional per-epoch training grids (augmentation arm)."""
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
     opt = torch.optim.AdamW(net.parameters(), lr=cfg["lr"], weight_decay=cfg["weight_decay"])
@@ -50,6 +51,8 @@ def train(net, tr_items, ytr, dev_items, ydev, cfg, seed, log=print):
         net.train()
         t0 = time.perf_counter()
         tot, nb = 0.0, 0
+        if items_for_epoch is not None:
+            tr_items = items_for_epoch(ep)
         for b, yb in batches(tr_items, ytr, cfg["batch_size"], rng):
             loss = F.cross_entropy(net(b), yb)
             opt.zero_grad()

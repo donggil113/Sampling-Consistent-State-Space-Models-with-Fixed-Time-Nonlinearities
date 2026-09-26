@@ -94,6 +94,17 @@ class TestScan(unittest.TestCase):
             self.assertLess(rel(diag_scan(a, b), diag_scan_seq(a, b)), 1e-13)
             self.assertLess(rel(diag_scan_parallel(a, b), diag_scan_seq(a, b)), 1e-13)
 
+    def test_scan_custom_backward_gradcheck(self):
+        g = torch.Generator().manual_seed(1)
+        a = torch.exp(torch.complex(-torch.rand(2, 9, 3, generator=g), torch.randn(2, 9, 3, generator=g))).requires_grad_(True)
+        b = torch.complex(torch.randn(2, 9, 3, generator=g), torch.randn(2, 9, 3, generator=g)).requires_grad_(True)
+        self.assertTrue(torch.autograd.gradcheck(diag_scan, (a, b), eps=1e-7, atol=1e-6))
+        # agrees with autograd through the plain loop
+        w = torch.randn(2, 9, 3, generator=g)
+        ga = torch.autograd.grad((diag_scan(a, b).real * w).sum(), (a, b))
+        gb = torch.autograd.grad((diag_scan_seq(a, b).real * w).sum(), (a, b))
+        self.assertLess(max(float((x - y).abs().max()) for x, y in zip(ga, gb)), 1e-12)
+
     def test_lti_fft_equals_scan(self):
         layer = DiagSSM(6, 4, dt_ref=0.02, seed=1).double()
         u = torch.randn(2, 100, 6)
