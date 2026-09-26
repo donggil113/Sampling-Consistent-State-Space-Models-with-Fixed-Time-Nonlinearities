@@ -1,1 +1,7 @@
 G_foh1 seed 0 P1_foh_clock: 0s
+G_foh1 seed 0 A1_foh_perobs: 511s
+G_foh1 seed 1 P1_foh_clock: 0s
+G_foh1 seed 1 A1_foh_perobs: 506s
+G_foh1 seed 2 P1_foh_clock: 0s
+G_foh1 seed 2 A1_foh_perobs: 500s
+G_zoh1 seed 0 A2_zoh_clock: 15s

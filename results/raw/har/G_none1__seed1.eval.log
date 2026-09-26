@@ -10,3 +10,18 @@ group G_none1 seed 1 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950
   eval B_point_clock1     drop30         acc 0.9332
   eval B_point_clock1     drop50         acc 0.9304
   eval B_point_clock1     drop70         acc 0.9165
+  eval B_point_clock1     drop50_reknot  acc 0.9304
+  fp64 B_point_clock1: {'foh_m2': 0.0, 'foh_m4': 0.0, 'foh_rand': 0.0, 'zoh_m2': 0.0, 'down2_reknot': 0.0}
+  eval B_dtonly           native         acc 0.9328
+  eval B_dtonly           foh_m2         acc 0.9338
+  eval B_dtonly           foh_m4         acc 0.9342
+  eval B_dtonly           foh_rand       acc 0.9328
+  eval B_dtonly           zoh_m2         acc 0.9332
+  eval B_dtonly           down2          acc 0.9335
+  eval B_dtonly           down4          acc 0.9291
+  eval B_dtonly           down2_reknot   acc 0.9342
+  eval B_dtonly           drop30         acc 0.9287
+  eval B_dtonly           drop50         acc 0.9247
+  eval B_dtonly           drop70         acc 0.8941
+  eval B_dtonly           drop50_reknot  acc 0.9304
+  fp64 B_dtonly: {'foh_m2': 0.018473534265862467, 'foh_m4': 0.026803610034707857, 'foh_rand': 0.027655354526505867, 'zoh_m2': 0.020044170388135295, 'down2_reknot': 0.07967556213708793}

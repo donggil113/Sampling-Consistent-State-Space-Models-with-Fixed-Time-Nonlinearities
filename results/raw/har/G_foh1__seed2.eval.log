@@ -1,0 +1,27 @@
+group G_foh1 seed 2 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  eval P1_foh_clock       native         acc 0.9284
+  eval P1_foh_clock       foh_m2         acc 0.9284
+  eval P1_foh_clock       foh_m4         acc 0.9284
+  eval P1_foh_clock       foh_rand       acc 0.9284
+  eval P1_foh_clock       zoh_m2         acc 0.9274
+  eval P1_foh_clock       down2          acc 0.9291
+  eval P1_foh_clock       down4          acc 0.9274
+  eval P1_foh_clock       down2_reknot   acc 0.9291
+  eval P1_foh_clock       drop30         acc 0.9291
+  eval P1_foh_clock       drop50         acc 0.9253
+  eval P1_foh_clock       drop70         acc 0.9002
+  eval P1_foh_clock       drop50_reknot  acc 0.9253
+  fp64 P1_foh_clock: {'foh_m2': 3.2090804159804393e-16, 'foh_m4': 4.2787738879739194e-16, 'foh_rand': 3.409647941979217e-16, 'zoh_m2': 0.009785353258322443, 'down2_reknot': 0.0}
+  eval A1_foh_perobs      native         acc 0.9284
+  eval A1_foh_perobs      foh_m2         acc 0.9284
+  eval A1_foh_perobs      foh_m4         acc 0.9291
+  eval A1_foh_perobs      foh_rand       acc 0.9281
+  eval A1_foh_perobs      zoh_m2         acc 0.9284
+  eval A1_foh_perobs      down2          acc 0.9264
+  eval A1_foh_perobs      down4          acc 0.9169
+  eval A1_foh_perobs      down2_reknot   acc 0.9291
+  eval A1_foh_perobs      drop30         acc 0.9264
+  eval A1_foh_perobs      drop50         acc 0.9138
+  eval A1_foh_perobs      drop70         acc 0.8738
+  eval A1_foh_perobs      drop50_reknot  acc 0.9253
+  fp64 A1_foh_perobs: {'foh_m2': 0.02905200864567437, 'foh_m4': 0.040125130063351375, 'foh_rand': 0.03478079326250565, 'zoh_m2': 0.02187099493458387, 'down2_reknot': 0.07063154403979352}
