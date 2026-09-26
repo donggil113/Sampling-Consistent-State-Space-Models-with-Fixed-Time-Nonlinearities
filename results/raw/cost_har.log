@@ -1,0 +1,5 @@
+P1_foh_clock       native   len  127.0 prep    193.8 us fwd   2471.8 us total   2665.6 us  params 56582
+P1_foh_clock       foh_m4   len  127.0 prep    554.0 us fwd   6707.1 us total   7261.1 us  params 56582
+P1_foh_clock       down2    len  127.0 prep    221.8 us fwd   2151.3 us total   2373.1 us  params 56582
+P1_foh_clock       drop50   len  127.0 prep    227.6 us fwd   2216.6 us total   2444.2 us  params 56582
+A1_foh_perobs      native   len  127.0 prep    188.5 us fwd   2641.5 us total   2830.1 us  params 56582

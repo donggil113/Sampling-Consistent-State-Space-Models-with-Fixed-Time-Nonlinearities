@@ -5,3 +5,17 @@ G_foh1 seed 1 A1_foh_perobs: 506s
 G_foh1 seed 2 P1_foh_clock: 0s
 G_foh1 seed 2 A1_foh_perobs: 500s
 G_zoh1 seed 0 A2_zoh_clock: 15s
+G_zoh1 seed 0 A3_zoh_perobs: 527s
+G_zoh1 seed 1 A2_zoh_clock: 16s
+G_zoh1 seed 1 A3_zoh_perobs: 543s
+G_zoh1 seed 2 A2_zoh_clock: 17s
+G_zoh1 seed 2 A3_zoh_perobs: 530s
+G_none1 seed 0 B_point_clock1: 0s
+G_none1 seed 0 B_dtonly: 474s
+G_none1 seed 1 B_point_clock1: 0s
+G_none1 seed 1 B_dtonly: 461s
+G_none1 seed 2 B_point_clock1: 0s
+G_none1 seed 2 B_dtonly: 455s
+G_zoh4 seed 0 A2_zoh_clock4: 9s
+G_zoh4 seed 1 A2_zoh_clock4: 9s
+G_zoh4 seed 2 A2_zoh_clock4: 9s
