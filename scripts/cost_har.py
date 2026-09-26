@@ -55,7 +55,7 @@ def main():
                 for _ in range(REPEATS):
                     items, t_prep = prep_all(X, spec, ctx, c)
                     t0 = time.perf_counter()
-                    predict(net, items, bs)
+                    predict(net, items, bs, force_scan=False)
                     tf.append(time.perf_counter() - t0)
                     tp.append(t_prep)
                 row = {"model": name, "group": g, "condition": c, "n_params": n_params,

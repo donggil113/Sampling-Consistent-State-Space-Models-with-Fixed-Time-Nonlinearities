@@ -9,7 +9,11 @@ Checked 2026-09-26. There were six parallel literature readers, one per angle:
 5. irregular time-series models;
 6. exact FOH discretization.
 
-Then came an adversarial re-check of every partial-or-higher overlap and a completeness critic. 95 distinct sources were recorded. Raw records are in `results/literature_records.json`.
+Then came an adversarial re-check of every partial-or-higher overlap and a completeness critic.
+
+- **Adversarial re-check.** 76 verification agents re-opened the primary source and were told to argue the hostile-reviewer direction when unsure. Of the ratings they changed, 9 went up and none went down. Ratings in this file are the corrected ones.
+- **Completeness critic.** 1 agent, which added 8 sources (§6b).
+- **Total.** 103 distinct sources. Raw records (readers, verifications, critic) are in `results/literature_records.json`.
 
 - **Access**
   - `FULL_TEXT_SECTIONS`: the listed sections of the full text were read, located by keyword search.
@@ -61,6 +65,8 @@ What we did **not** find (absence of evidence, not proof of novelty):
 | **Fanaskov & Oseledets 2022**, Spectral Neural Operators, arXiv 2205.10573 | States that under lossless refinement a pointwise σ followed by a global linear operator makes the output grid-dependent (FNO differs by about 25% between h and 2h). Fix: a fixed-size coefficient representation | Time series, causal FOH paths, SSMs | agent |
 | **Bartolucci et al. 2023** ReNO (arXiv 2305.19913); **Raonić et al. 2023** CNO (arXiv 2302.01178); CROP (ICLR 2025) | A formal framework for aliasing and representation equivalence. Nonlinearity on a fixed (upsampled, band-limited) computational grid. Resampling to the computational grid for other resolutions | Band-limited spaces there, piecewise-linear here. N2's exact invariance is an instance of representation equivalence with hat-function frames on nested knots (agent's reading) | agent (CROP: ABSTRACT_ONLY) |
 | **Colagrande et al. 2026**, "Limits of Resolution Equivariance in FNOs", arXiv 2606.00677 | Lossless (Fourier-padded) refinement changes FNO outputs; attributes this to nonlinear aliasing; running at the training grid and upsampling is a strong baseline | Same principle, time-series SSM setting | self (abstract) + agent |
+| **Kidger et al. 2020** NCDE (arXiv 2005.08926); Kidger thesis (arXiv 2202.02435); Berner et al. 2025 (arXiv 2506.10973) | Upgraded to substantial by the adversarial re-check. NCDE solutions are continuous-level invariant to spline-consistent knots. Berner et al. document "interpolate to a fixed latent grid, then run the network" as a standard recipe, and note it discards high-resolution information | — | agent |
+| **Zhang et al. 2023** USES (arXiv 2309.17384); **Chao et al. 2025** USEMamba (arXiv 2505.21198) | Fixed-duration STFT (hop 16 ms), so the frame count does not depend on the sampling rate. All nonlinear layers (dual-path Transformer or Mamba) run on this physical-time frame clock. Train at 8 kHz, test at 16/48 kHz | An STFT of point samples is not refinement-invariant (kink harmonics of the PL path enter new bins). In this project the analogous "fixed clock without exact stem" rules (A2_zoh_clock, B_bilin_clock4) are measured instead; an SFI-STFT baseline was NOT run | agent (critic) |
 
 ## 3. FlowState (the model named in the task)
 
@@ -125,9 +131,17 @@ What we did **not** find (absence of evidence, not proof of novelty):
 - **Audio.** Sample-rate-independent RNNs for audio effects (2406.06293, 2409.15884).
 - **Forecasting.** TiRex (the source of FlowState's masking/RevIN).
 
+## 6b. Added by the completeness critic
+
+- **HALO** (arXiv 2608.27233, 2026). IMU foundation model with 1-s physical-time patches and a Transformer on the patch clock. The within-patch CNN is nonlinear at every sample (kernels defined in samples), so it is not refinement-invariant. UCI-HAR is only in its training set.
+- **Hasegawa et al. 2021** (arXiv 2101.00812). HAR robust to sampling rates: linear interpolation to a fixed length, a CNN, and an adversarial sampling-rate discriminator. It is the HAR instance of the mandatory resampling baseline. The discriminator still identifies the rate at 96.9% after real low-pass downsampling, so resampling is not invariant to real downsampling, which is consistent with this project's three-way separation. HASC accuracy is 85–87% down to 12.5 Hz, collapsing to 39–46% at 4 Hz.
+- **t-PatchGNN** (ICML 2024) and **Phased LSTM** (2016). Fixed time-span patches, and time-gated per-observation updates, respectively.
+- **ADAA-RNN** (DAFx 2025) and **Pupu-Vocoder** (arXiv 2512.20211). Antiderivative anti-aliasing evaluates each activation in closed form over the linear-interpolation reconstruction of its argument. "Continuous-time treatment of the PL reconstruction" is therefore also known on the *nonlinearity* side, and this project claims exactness only for the linear stem integral.
+- **Found but not read** (no claims made): TF-Refiner 2609.29463, SFI codec 2607.01865, NCDSSM 2301.11308, Khatri-Rao Neural Operators, CaMBRAIN 2605.28792, WaveSSM 2602.22266, 2505.11375, ReIMTS 2602.21498, MambaRate 2507.12090, GP adapters (Li & Marlin 2016; Futoma 2017).
+
 ## 7. Consequence for N2
 
-- **The architecture claim fails criterion G2** of the pre-registration: several works have overall overlap "substantial". The verdict is **NO_GO for any new-architecture claim**, whatever the HAR numbers.
+- **The architecture claim fails criterion G2** of the pre-registration. After adversarial re-checking, more than twenty sources have overall overlap "substantial", and five have "full" overlap on the fixed-time-nonlinearity component: RFormer, torchcde `logsig_windows`, Walker 2026, SFI non-integer strides, and Berner 2025. The verdict is **NO_GO for any new-architecture claim**, whatever the HAR numbers.
 - **What remains** could only be an *analysis* contribution:
   - the per-observation-nonlinearity counterexample and the affine-only proposition (S2), framed as an instance of the known operator-learning principle;
   - the FlowState refutation (FS1–FS3);

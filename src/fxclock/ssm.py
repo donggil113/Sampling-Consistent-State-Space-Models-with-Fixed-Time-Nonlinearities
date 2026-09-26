@@ -20,7 +20,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from .phi import phi12
+from .phi import cexpm1, phi12
 from .scan import diag_scan
 
 
@@ -49,9 +49,10 @@ class DiagSSM(nn.Module):
             return self._lti(u, dt, lam, C)
         cdt = lam.dtype
         z = dt.to(u.dtype)[..., None, None].to(cdt) * lam           # (Bt, L, H, N)
-        p1, _ = phi12(z)
         a = torch.exp(z)
-        b = dt.to(u.dtype)[..., None, None].to(cdt) * p1 * u[..., None].to(cdt)
+        # dt * phi1(lambda dt) = expm1(z) / lambda: exact, no cancellation (lambda != 0), and no series
+        # intermediates kept by autograd (the phi12 series made per-observation training OOM, deviation D5)
+        b = cexpm1(z) / lam * u[..., None].to(cdt)
         x = diag_scan(a, b)
         y = (x * C).sum(-1).real
         return y + self.D * u

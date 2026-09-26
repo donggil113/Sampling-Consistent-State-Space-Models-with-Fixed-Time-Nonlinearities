@@ -152,7 +152,7 @@ def main():
         for cond in CONDITIONS:
             items, tp = prep_all(Xte, spec, ctx, cond)
             t1 = time.perf_counter()
-            lg = predict(enet, items, bs)
+            lg = predict(enet, items, bs, force_scan=False)   # uniform grids -> exact LTI/FFT path (D6)
             ev[cond] = {"prep_seconds": tp, "forward_seconds": time.perf_counter() - t1,
                         "acc": float((lg.argmax(1) == yte).mean()),
                         "mean_knots": float(np.mean([it["q"].shape[0] for it in items]))}
@@ -162,14 +162,14 @@ def main():
         enet64 = Net(spec, Xtr.shape[2], 6, cfg, seed=a.seed, native_dt=NATIVE_DT, ls_scale=ls_scale).double()
         enet64.load_state_dict({k: v.double() if v.is_floating_point() else v for k, v in net.state_dict().items()})
         base_items, _ = prep_all(Xte[sub_idx], spec, ctx, "native")
-        base = predict(enet64, base_items, bs, dtype=torch.float64)
+        base = predict(enet64, base_items, bs, dtype=torch.float64, force_scan=False)
         fp64 = {}
         for cond in ("foh_m2", "foh_m4", "foh_rand", "zoh_m2", "down2_reknot"):
             it, _ = prep_all(Xte[sub_idx], spec, ctx, cond)
-            lg = predict(enet64, it, bs, dtype=torch.float64)
+            lg = predict(enet64, it, bs, dtype=torch.float64, force_scan=False)
             if cond == "down2_reknot":
                 it2, _ = prep_all(Xte[sub_idx], spec, ctx, "down2")
-                ref = predict(enet64, it2, bs, dtype=torch.float64)
+                ref = predict(enet64, it2, bs, dtype=torch.float64, force_scan=False)
             else:
                 ref = base
             fp64[cond] = float(np.max(np.abs(lg - ref)) / np.max(np.abs(ref)))
