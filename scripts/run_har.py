@@ -55,6 +55,7 @@ def main():
     ap.add_argument("--lr", type=float, default=None)
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--threads", type=int, default=1)
+    ap.add_argument("--eval-only", action="store_true", help="load the saved checkpoint and training record; skip training")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     cfg_all = json.load(open(a.config))
@@ -68,7 +69,7 @@ def main():
         cfg["epochs"] = a.epochs
     tag = f"{a.group}__seed{a.seed}" + ("__pilot" if a.pilot else "") + (f"__lr{cfg['lr']:g}" if a.lr is not None else "")
     os.makedirs(a.out, exist_ok=True)
-    logf = open(os.path.join(a.out, tag + ".log"), "w")
+    logf = open(os.path.join(a.out, tag + (".eval.log" if a.eval_only else ".log")), "w")
 
     def log(s):
         print(s, file=logf, flush=True)
@@ -93,17 +94,37 @@ def main():
         ls_scale = np.sqrt((ls_all ** 2).mean(0)) + 1e-12   # RMS (a std is 0 for the constant time increment)
     net = Net(train_spec, Xtr.shape[2], 6, cfg, seed=a.seed, native_dt=NATIVE_DT, ls_scale=ls_scale)
     n_params = sum(p.numel() for p in net.parameters())
-    t0 = time.perf_counter()
-    hist, best_dev = train(net, tr_items, ytr, dv_items, ydv, cfg, a.seed, log=log)
-    t_train = time.perf_counter() - t0
-    rec = {"group": a.group, "seed": a.seed, "pilot": a.pilot, "cfg": cfg, "n_params": n_params, "best_dev_acc": best_dev,
+    if a.eval_only:
+        net.load_state_dict(torch.load(os.path.join(a.out, tag + ".pt")))
+        trp = os.path.join(a.out, tag + "__train.json")
+        if os.path.exists(trp):
+            rec = json.load(open(trp))
+        else:  # runs trained before the __train.json record existed: parse the training log
+            hist = []
+            for line in open(os.path.join(a.out, tag + ".log")):
+                p = line.split()
+                if len(p) >= 7 and p[0] == "ep":
+                    hist.append({"epoch": int(p[1]), "train_loss": float(p[3]), "dev_acc": float(p[5]),
+                                 "epoch_seconds": float(p[6].strip("(s)"))})
+            rec = {"group": a.group, "seed": a.seed, "pilot": False, "cfg": cfg, "n_params": n_params,
+                   "best_dev_acc": max(h["dev_acc"] for h in hist), "history": hist,
+                   "train_seconds": sum(h["epoch_seconds"] for h in hist), "prep_train_seconds": tp_tr, "threads": a.threads,
+                   "git_head_train": "see log (trained before eval-only split)", "config_sha256": sha(a.config)}
+        rec["eval_only_git_head"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    else:
+        t0 = time.perf_counter()
+        hist, best_dev = train(net, tr_items, ytr, dv_items, ydv, cfg, a.seed, log=log)
+        t_train = time.perf_counter() - t0
+    rec = rec if a.eval_only else {"group": a.group, "seed": a.seed, "pilot": a.pilot, "cfg": cfg, "n_params": n_params, "best_dev_acc": best_dev,
            "history": hist, "train_seconds": t_train, "prep_train_seconds": tp_tr, "threads": a.threads,
            "git_head": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
            "config_sha256": sha(a.config)}
     if a.pilot:
         json.dump(rec, open(os.path.join(a.out, tag + ".json"), "w"), indent=1)
         return
-    torch.save(net.state_dict(), os.path.join(a.out, tag + ".pt"))
+    if not a.eval_only:
+        torch.save(net.state_dict(), os.path.join(a.out, tag + ".pt"))
+        json.dump(rec, open(os.path.join(a.out, tag + "__train.json"), "w"), indent=1)
     sub_idx = np.arange(cfg_all["eval"]["fp64_subset"])
     rec["eval"] = {}
     logits_out = {}

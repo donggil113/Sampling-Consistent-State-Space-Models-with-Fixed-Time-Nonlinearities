@@ -13,7 +13,7 @@ from fxclock import knots as K
 from fxclock.models import SPECS, Net
 from fxclock.phi import phi12, phi12_naive
 from fxclock.prep import collate, global_logsig2, logsig2_windows, prep_window
-from fxclock.scan import diag_scan, diag_scan_seq
+from fxclock.scan import diag_scan, diag_scan_parallel, diag_scan_seq
 from fxclock.ssm import DiagSSM
 from fxclock.stem import BilinearStem, ExactStem
 from n1ref.grids import base_grid, base_times, sample_path, split_grid
@@ -92,6 +92,7 @@ class TestScan(unittest.TestCase):
             a = torch.exp(torch.complex(-torch.rand(3, L, 5, generator=g), torch.randn(3, L, 5, generator=g)))
             b = torch.complex(torch.randn(3, L, 5, generator=g), torch.randn(3, L, 5, generator=g))
             self.assertLess(rel(diag_scan(a, b), diag_scan_seq(a, b)), 1e-13)
+            self.assertLess(rel(diag_scan_parallel(a, b), diag_scan_seq(a, b)), 1e-13)
 
     def test_lti_fft_equals_scan(self):
         layer = DiagSSM(6, 4, dt_ref=0.02, seed=1).double()
