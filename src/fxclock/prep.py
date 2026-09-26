@@ -46,14 +46,19 @@ def logsig2_windows(seg, x_start):
     return np.concatenate([lev1, lev2], axis=1)
 
 
-def global_logsig2(loc, D):
+def global_logsig2(loc, D, basepoint=None):
     """Depth-2 log-signature of Y on [t_start, q_j] from the window ones (Chen): level 1 adds;
-    A_global(j) = sum_{w<=j} [A_w + 1/2 (P_{w-1} x Delta_w - Delta_w x P_{w-1})],  P_{w-1} = sum_{v<w} Delta_v."""
+    A_global(j) = sum_{w<=j} [A_w + 1/2 (P_{w-1} x Delta_w - Delta_w x P_{w-1})],  P_{w-1} = sum_{v<w} Delta_v.
+
+    basepoint: optional (D,) increment of a segment prepended before t_start (basepoint augmentation, as in
+    signatory's basepoint=True): the path starts at the origin and jumps to Y(t_start).  Without it the
+    features are translation-invariant and lose absolute levels (e.g. gravity direction in HAR)."""
     lev1 = loc[:, :D]
-    P = np.concatenate([np.zeros((1, D)), np.cumsum(lev1, axis=0)[:-1]], axis=0)
+    P0 = np.zeros((1, D)) if basepoint is None else basepoint[None]
+    P = P0 + np.concatenate([np.zeros((1, D)), np.cumsum(lev1, axis=0)[:-1]], axis=0)
     iu = np.triu_indices(D, k=1)
     cross = 0.5 * (P[:, :, None] * lev1[:, None, :] - lev1[:, :, None] * P[:, None, :])[:, iu[0], iu[1]]
-    return np.concatenate([np.cumsum(lev1, axis=0), np.cumsum(loc[:, D:] + cross, axis=0)], axis=1)
+    return np.concatenate([P0 + np.cumsum(lev1, axis=0), np.cumsum(loc[:, D:] + cross, axis=0)], axis=1)
 
 
 def prep_window(ks, spec, ctx):
@@ -86,7 +91,8 @@ def prep_window(ks, spec, ctx):
         loc = logsig2_windows(seg, evaluate(ks, np.array([t0]), "foh")[0])
         feats.append(loc)
         if "logsig_global" in spec["feats"]:
-            feats.append(global_logsig2(loc, ks.x.shape[1] + 1))
+            x0 = evaluate(ks, np.array([t0]), "foh")[0]
+            feats.append(global_logsig2(loc, ks.x.shape[1] + 1, basepoint=np.concatenate([[0.0], x0])))
     if "point" in spec["feats"]:
         feats.append(xq)
     if "binmean" in spec["feats"]:
