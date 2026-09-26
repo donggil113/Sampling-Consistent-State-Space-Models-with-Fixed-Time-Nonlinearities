@@ -1,0 +1,29 @@
+group G_bilin4 seed 2 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4212 dev 0.9437 (31.8s)
+  ep   1 loss 0.1471 dev 0.9344 (35.2s)
+  ep   2 loss 0.1214 dev 0.9679 (22.5s)
+  ep   3 loss 0.1060 dev 0.9622 (23.3s)
+  ep   4 loss 0.0990 dev 0.9515 (21.6s)
+  ep   5 loss 0.0866 dev 0.9558 (24.8s)
+  ep   6 loss 0.0732 dev 0.9501 (28.1s)
+  ep   7 loss 0.0658 dev 0.9622 (23.0s)
+  ep   8 loss 0.0571 dev 0.9601 (24.7s)
+  ep   9 loss 0.0471 dev 0.9615 (21.8s)
+  ep  10 loss 0.0459 dev 0.9601 (24.5s)
+  ep  11 loss 0.0370 dev 0.9593 (22.8s)
+  ep  12 loss 0.0311 dev 0.9608 (25.5s)
+  ep  13 loss 0.0299 dev 0.9601 (21.6s)
+  ep  14 loss 0.0289 dev 0.9601 (36.8s)
+  eval B_bilin_clock4     native         acc 0.9240
+  eval B_bilin_clock4     foh_m2         acc 0.9250
+  eval B_bilin_clock4     foh_m4         acc 0.9264
+  eval B_bilin_clock4     foh_rand       acc 0.9243
+  eval B_bilin_clock4     zoh_m2         acc 0.9247
+  eval B_bilin_clock4     down2          acc 0.9226
+  eval B_bilin_clock4     down4          acc 0.9226
+  eval B_bilin_clock4     down2_reknot   acc 0.9240
+  eval B_bilin_clock4     drop30         acc 0.9226
+  eval B_bilin_clock4     drop50         acc 0.9169
+  eval B_bilin_clock4     drop70         acc 0.8819
+  eval B_bilin_clock4     drop50_reknot  acc 0.9169
+  fp64 B_bilin_clock4: {'foh_m2': 0.10846516441602919, 'foh_m4': 0.08294598189455224, 'foh_rand': 0.08303140004336207, 'zoh_m2': 0.12016383057692642, 'down2_reknot': 0.09573828790086233}

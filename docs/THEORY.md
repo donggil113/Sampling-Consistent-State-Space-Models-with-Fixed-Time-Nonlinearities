@@ -77,9 +77,9 @@ Suppose this layer is invariant under insertion of one virtual knot, for all inp
 
 **ZOH version (PROVED by counterexample, CE2).**
 
-- *Layer 1 is invariant.* Under ZOH-lossless splitting (held values repeated), a per-knot σ applied to the *held input* is invariant, because the values do not change. CE2 confirms this: layer 1 changes by ≤ 2e-15.
+- *Layer 1 is invariant.* Under ZOH-lossless splitting (held values repeated), a per-knot σ applied to the *held input* is invariant, because the values do not change. CE2 confirms this: layer 1 changes by ≤ 6.8e-15 (maximum over 8 units and m = 2…16).
 - *Deeper layers are not.* Any deeper layer receives a signal that varies inside held intervals (the output of a nontrivial linear layer). Re-holding that signal at the knots changes it under refinement, **even for σ = identity**: the change is 19–35% with GELU and 22–40% with identity (CE2, median over 8 units, m = 2…16).
-- *Diagnosis.* The immediate source is per-knot *re-sampling of intermediate continuous signals*. For σ = identity it can be removed by integrating the whole linear cascade exactly: CE2 cascade_exact ≤ 3e-15. For nonlinear σ no closed form exists in general, which is what forces the nonlinearity to be evaluated somewhere. Evaluating it on the observation knots makes the representation grid-dependent; evaluating it on a fixed clock does not (CE2 clock_gelu ≤ 2.5e-15).
+- *Diagnosis.* The immediate source is per-knot *re-sampling of intermediate continuous signals*. For σ = identity it can be removed by integrating the whole linear cascade exactly: CE2 cascade_exact ≤ 6.1e-15. For nonlinear σ no closed form exists in general, which is what forces the nonlinearity to be evaluated somewhere. Evaluating it on the observation knots makes the representation grid-dependent; evaluating it on a fixed clock does not (CE2 clock_gelu ≤ 8.0e-15).
 
 **Relation to prior work.**
 
@@ -125,7 +125,12 @@ Suppose this layer is invariant under insertion of one virtual knot, for all inp
 ### S7 — Ablation equivalence on the native grid (PROVED; elementary)
 
 - If the clock coincides with the native knot times (Δ_c = native dt and τ_j = t_j bit-for-bit; see `knots.clock_times`), the clocked and per-observation inference rules define the same function on the native grid.
-- So the 2×2 ablation "fixed clock on/off" is an inference-time switch on identical trained weights. It isolates *where* the nonlinear updates are placed.
+- So the 2×2 ablation "fixed clock on/off" is an inference-time switch on identical trained weights.
+- **What the switch moves** (corrected after the code review, `docs/DEVIATIONS.md` D7). Under a grid change it moves three things at once:
+  1. the stem query times;
+  2. the sequence on which the nonlinear backbone runs (with the per-knot re-hold of every linear layer's input);
+  3. the readout quadrature nodes. The per-observation readout is a time-weighted right-Riemann mean over knots, which is itself grid-dependent even for a grid-free signal (cf. N1 C5).
+- `scripts/supplementary_eval.py` separates (3) from (1)+(2): it reads the refined run only at the measured (native) knots with the native weights (`same_times`), and it reports a grid-free readout control.
 
 ### S8 — The exact stem is not an anti-aliasing guarantee (STANDARD)
 

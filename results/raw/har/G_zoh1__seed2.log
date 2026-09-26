@@ -4,3 +4,38 @@ group G_zoh1 seed 2 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 
   ep   2 loss 0.1201 dev 0.9686 (92.3s)
   ep   3 loss 0.1063 dev 0.9601 (91.3s)
   ep   4 loss 0.0958 dev 0.9622 (93.2s)
+  ep   5 loss 0.0856 dev 0.9593 (104.4s)
+  ep   6 loss 0.0745 dev 0.9579 (88.2s)
+  ep   7 loss 0.0679 dev 0.9643 (100.7s)
+  ep   8 loss 0.0605 dev 0.9579 (90.5s)
+  ep   9 loss 0.0504 dev 0.9608 (91.6s)
+  ep  10 loss 0.0506 dev 0.9601 (93.8s)
+  ep  11 loss 0.0439 dev 0.9593 (89.3s)
+  ep  12 loss 0.0392 dev 0.9601 (91.6s)
+  ep  13 loss 0.0370 dev 0.9601 (116.3s)
+  ep  14 loss 0.0364 dev 0.9601 (93.6s)
+  eval A2_zoh_clock       native         acc 0.9257
+  eval A2_zoh_clock       foh_m2         acc 0.9260
+  eval A2_zoh_clock       foh_m4         acc 0.9260
+  eval A2_zoh_clock       foh_rand       acc 0.9260
+  eval A2_zoh_clock       zoh_m2         acc 0.9257
+  eval A2_zoh_clock       down2          acc 0.9247
+  eval A2_zoh_clock       down4          acc 0.9209
+  eval A2_zoh_clock       down2_reknot   acc 0.9270
+  eval A2_zoh_clock       drop30         acc 0.9240
+  eval A2_zoh_clock       drop50         acc 0.9165
+  eval A2_zoh_clock       drop70         acc 0.8968
+  eval A2_zoh_clock       drop50_reknot  acc 0.9243
+  fp64 A2_zoh_clock: {'foh_m2': 0.007923921023263798, 'foh_m4': 0.011879395908594343, 'foh_rand': 0.0063781131232073475, 'zoh_m2': 4.2500657577385456e-16, 'down2_reknot': 0.08781304320442422}
+  eval A3_zoh_perobs      native         acc 0.9257
+  eval A3_zoh_perobs      foh_m2         acc 0.9264
+  eval A3_zoh_perobs      foh_m4         acc 0.9267
+  eval A3_zoh_perobs      foh_rand       acc 0.9257
+  eval A3_zoh_perobs      zoh_m2         acc 0.9257
+  eval A3_zoh_perobs      down2          acc 0.9220
+  eval A3_zoh_perobs      down4          acc 0.9128
+  eval A3_zoh_perobs      down2_reknot   acc 0.9274
+  eval A3_zoh_perobs      drop30         acc 0.9226
+  eval A3_zoh_perobs      drop50         acc 0.9087
+  eval A3_zoh_perobs      drop70         acc 0.8741
+  eval A3_zoh_perobs      drop50_reknot  acc 0.9243

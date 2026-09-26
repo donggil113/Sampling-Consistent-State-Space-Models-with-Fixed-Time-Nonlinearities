@@ -90,12 +90,17 @@ class SSMBackbone(nn.Module):
         self.norm = nn.LayerNorm(H)
         self.head = nn.Linear(H, n_out)
 
-    def forward(self, feats, dt, weights):
-        """feats (Bt, L, F); dt float or (Bt, L); weights (Bt, L) pooling weights (sum to 1 per row)."""
+    def forward(self, feats, dt, weights, per_step=False):
+        """feats (Bt, L, F); dt float or (Bt, L); weights (Bt, L) pooling weights (sum to 1 per row).
+
+        per_step=True returns head(x_k) at every position (Bt, L, n_out); because the head is affine and the
+        weights sum to 1, the pooled logits equal sum_k w_k head(x_k)."""
         x = self.enc(feats)
         for b in self.blocks:
             x = b(x, dt)
         x = self.norm(x)
+        if per_step:
+            return self.head(x)
         pooled = (x * weights.unsqueeze(-1)).sum(1)
         return self.head(pooled)
 

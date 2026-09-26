@@ -72,6 +72,7 @@ def prep_window(ks, spec, ctx):
         q = clock_times(J, r, ndt)
     else:
         q = ks.t[ks.t > t0]
+        out["measured"] = ks.measured[ks.t > t0]
     out["q"] = q
     feats = []
     if spec.get("stem"):
@@ -133,6 +134,8 @@ def collate(items, dtype=torch.float32):
     out["dt"] = torch.as_tensor(pad("dt", ()), dtype=dtype)
     out["w"] = torch.as_tensor(pad("w", ()), dtype=dtype)
     out["q"] = torch.as_tensor(pad("q", ()), dtype=dtype)
+    if "measured" in items[0]:
+        out["measured"] = torch.as_tensor(pad("measured", (), fill=0.0), dtype=torch.bool)
     out["uniform"] = all(it["q"].shape[0] == L for it in items) and bool(
         np.allclose(np.concatenate([it["dt"] for it in items]), items[0]["dt"][0], rtol=0, atol=1e-12))
     if "d" in items[0]:

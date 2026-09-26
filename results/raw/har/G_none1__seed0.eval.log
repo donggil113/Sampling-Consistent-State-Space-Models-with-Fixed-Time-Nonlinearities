@@ -1,0 +1,27 @@
+group G_none1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  eval B_point_clock1     native         acc 0.9277
+  eval B_point_clock1     foh_m2         acc 0.9277
+  eval B_point_clock1     foh_m4         acc 0.9277
+  eval B_point_clock1     foh_rand       acc 0.9277
+  eval B_point_clock1     zoh_m2         acc 0.9277
+  eval B_point_clock1     down2          acc 0.9274
+  eval B_point_clock1     down4          acc 0.9257
+  eval B_point_clock1     down2_reknot   acc 0.9274
+  eval B_point_clock1     drop30         acc 0.9270
+  eval B_point_clock1     drop50         acc 0.9237
+  eval B_point_clock1     drop70         acc 0.9091
+  eval B_point_clock1     drop50_reknot  acc 0.9237
+  fp64 B_point_clock1: {'foh_m2': 0.0, 'foh_m4': 0.0, 'foh_rand': 0.0, 'zoh_m2': 0.0, 'down2_reknot': 0.0}
+  eval B_dtonly           native         acc 0.9277
+  eval B_dtonly           foh_m2         acc 0.9277
+  eval B_dtonly           foh_m4         acc 0.9277
+  eval B_dtonly           foh_rand       acc 0.9281
+  eval B_dtonly           zoh_m2         acc 0.9281
+  eval B_dtonly           down2          acc 0.9284
+  eval B_dtonly           down4          acc 0.9274
+  eval B_dtonly           down2_reknot   acc 0.9274
+  eval B_dtonly           drop30         acc 0.9267
+  eval B_dtonly           drop50         acc 0.9270
+  eval B_dtonly           drop70         acc 0.8989
+  eval B_dtonly           drop50_reknot  acc 0.9237
+  fp64 B_dtonly: {'foh_m2': 0.022725591615026516, 'foh_m4': 0.028924159072925983, 'foh_rand': 0.02410013643184692, 'zoh_m2': 0.01865801589091371, 'down2_reknot': 0.09672279504009146}

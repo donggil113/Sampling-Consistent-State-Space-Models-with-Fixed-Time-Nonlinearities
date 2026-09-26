@@ -28,12 +28,21 @@ CONDITIONS = {
     "drop50_reknot": ("missing+virtual", lambda ks, rng: K.add_virtual(K.drop_random(ks, 0.5, rng), ks.t, "foh")),
 }
 
+# Supplementary (added after the code review, deviation D7): twins with ZOH-valued virtual knots, i.e. the same
+# RIGHT-HOLD path as the lossy parent.  The FOH twins above are the same path only for FOH-rule models.
+SUPPLEMENTARY_CONDITIONS = {
+    "down2_reknot_zoh": ("downsample+virtual", lambda ks, rng: K.add_virtual(K.downsample(ks, 2), ks.t, "zoh")),
+    "drop50_reknot_zoh": ("missing+virtual", lambda ks, rng: K.add_virtual(K.drop_random(ks, 0.5, rng), ks.t, "zoh")),
+}
+
 COND_SEED = {name: 1000 + i for i, name in enumerate(CONDITIONS)}
 # drop50_reknot must use the SAME drop pattern as drop50
 COND_SEED["drop50_reknot"] = COND_SEED["drop50"]
+COND_SEED["drop50_reknot_zoh"] = COND_SEED["drop50"]
+COND_SEED["down2_reknot_zoh"] = COND_SEED["down2_reknot"]
 
 
 def apply(name, ks, window_index):
-    kind, fn = CONDITIONS[name]
+    kind, fn = CONDITIONS[name] if name in CONDITIONS else SUPPLEMENTARY_CONDITIONS[name]
     rng = np.random.default_rng([COND_SEED[name], int(window_index)])
     return fn(ks, rng)

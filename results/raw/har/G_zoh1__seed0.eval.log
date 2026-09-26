@@ -20,3 +20,8 @@ group G_zoh1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 
   eval A3_zoh_perobs      down2          acc 0.9162
   eval A3_zoh_perobs      down4          acc 0.9097
   eval A3_zoh_perobs      down2_reknot   acc 0.9186
+  eval A3_zoh_perobs      drop30         acc 0.9155
+  eval A3_zoh_perobs      drop50         acc 0.9060
+  eval A3_zoh_perobs      drop70         acc 0.8683
+  eval A3_zoh_perobs      drop50_reknot  acc 0.9111
+  fp64 A3_zoh_perobs: {'foh_m2': 0.027040428766628558, 'foh_m4': 0.037414343005465596, 'foh_rand': 0.023295128545248043, 'zoh_m2': 0.015520692294944584, 'down2_reknot': 0.0673355354841886}

@@ -98,7 +98,7 @@ class Net(nn.Module):
             self.core = TransformerBackbone(f_in, cfg["H"], cfg["tf_layers"], cfg["tf_heads"], cfg["dropout"], n_out,
                                             time_scale=self.dt_ref)
 
-    def forward(self, batch, force_scan=False):
+    def forward(self, batch, force_scan=False, per_step=False):
         if self.spec["family"] == "nrde":
             return self.core(batch["x0"], batch["ls"])
         feats = batch["feats"]
@@ -115,4 +115,4 @@ class Net(nn.Module):
             dt = batch["dt"]
             if batch["uniform"] and not force_scan:
                 dt = float(batch["dt"][0, 0])
-        return self.core(feats, dt, batch["w"])
+        return self.core(feats, dt, batch["w"], per_step=per_step)

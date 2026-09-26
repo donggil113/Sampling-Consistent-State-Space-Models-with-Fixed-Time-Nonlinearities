@@ -16,3 +16,12 @@ group G_foh1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 
   eval A1_foh_perobs      foh_m2         acc 0.9162
   eval A1_foh_perobs      foh_m4         acc 0.9162
   eval A1_foh_perobs      foh_rand       acc 0.9158
+  eval A1_foh_perobs      zoh_m2         acc 0.9162
+  eval A1_foh_perobs      down2          acc 0.9155
+  eval A1_foh_perobs      down4          acc 0.9104
+  eval A1_foh_perobs      down2_reknot   acc 0.9158
+  eval A1_foh_perobs      drop30         acc 0.9135
+  eval A1_foh_perobs      drop50         acc 0.9050
+  eval A1_foh_perobs      drop70         acc 0.8660
+  eval A1_foh_perobs      drop50_reknot  acc 0.9091
+  fp64 A1_foh_perobs: {'foh_m2': 0.02664381286793492, 'foh_m4': 0.03719342764977473, 'foh_rand': 0.024637290292575137, 'zoh_m2': 0.01583901239507485, 'down2_reknot': 0.07005262308963396}
