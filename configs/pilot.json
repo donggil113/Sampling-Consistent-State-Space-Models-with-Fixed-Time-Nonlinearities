@@ -1,0 +1,9 @@
+{
+  "note": "PILOT ONLY (dev set, seed 99, not a pre-registered seed). Used to fix epochs and learning rates before pre-registration. Test data is not touched in pilot mode.",
+  "data": {"har_root": "/home/user/data/UCI HAR Dataset", "har_cache": "/home/user/data/har_cache.npz", "n_dev_subjects": 4, "dev_seed": 2026},
+  "model": {"n_stem": 32, "stem_tau_min": 0.02, "stem_tau_max": 2.56, "stem_f_max": 25.0, "H": 64, "N": 16, "n_layers": 4, "dropout": 0.1,
+            "tf_layers": 4, "tf_heads": 4, "nrde_H": 32, "nrde_hidden": 64},
+  "training": {"lr_by_family": {"ssm": 0.002, "transformer": 0.001, "nrde": 0.002}, "weight_decay": 0.01, "epochs": 20, "batch_size": 64,
+               "eval_batch_size": 128, "grad_clip": 1.0},
+  "eval": {"batch_size_perobs": 32, "fp64_subset": 256}
+}

@@ -1,0 +1,89 @@
+{
+  "run_id": "N2-HAR-MAIN",
+  "status": "PRE-REGISTERED (written before any test-set evaluation)",
+  "drafted_utc": "2026-09-26",
+  "question": "When only the time grid of the SAME reconstructed input changes, does a model that performs a nonlinear update at every observation produce a grid-dependent representation? Does a model with an exact linear input-integration stem and nonlinear updates only on a fixed physical-time clock add anything beyond fixed-grid resampling and prior work?",
+  "pilot_record": "Before this file: 5 pilot trainings on the DEV split only with non-registered seed 99 (G_foh1 lr 2e-3 and 5e-3, G_tf1 lr 1e-3, G_nrde4 lr 2e-3 twice). Test data was not evaluated. Findings: dev accuracy plateaus near 0.96 by epoch 3; lr 2e-3 and 5e-3 equivalent; the NRDE baseline needed two fixes (logsig scaled by train RMS instead of std, because the time increment has std 0; drive divided by sqrt(dim) and LayerNorm before the head). Logs: results/pilot/.",
+  "data": {
+    "har_root": "/home/user/data/UCI HAR Dataset",
+    "har_cache": "/home/user/data/har_cache.npz",
+    "source_url": "https://archive.ics.uci.edu/static/public/240/human+activity+recognition+using+smartphones.zip",
+    "source_zip_sha256": "c00b803081a5c797cd5e4b83700a9810b38d53d9d84e01917e090e1fdbc81031",
+    "license": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "signals": "raw inertial signals, 9 channels, 50 Hz, windows of 128 samples (2.56 s, 50% overlap), physical time t_i = i/50 s, window span [0, 2.54] s",
+    "split": "official subject-disjoint split: 21 train subjects / 9 test subjects. Dev = 4 train subjects drawn with numpy default_rng(2026) -> subjects [1, 6, 22, 25] (1402 windows); train 5950 windows; test 2947 windows",
+    "n_dev_subjects": 4,
+    "dev_seed": 2026,
+    "normalization": "per-channel mean/std over all train+dev windows and time points (affine, commutes with the reconstruction rules)",
+    "independent_unit": "test subject (9). Windows of one subject overlap by 50% and are not independent. Training seeds are not data units and are reported separately."
+  },
+  "reconstruction_and_query_rules": {
+    "foh": "X(t) = linear interpolation of the knots on [t_0, t_{n-1}], constant hold outside",
+    "zoh": "right hold X(t) = x_i on (t_{i-1}, t_i] (the hold implied by h_k = Abar(dt_k) h_{k-1} + Bbar(dt_k) u_k)",
+    "clock": "tau_j = j * Delta_c, j = 1..J, J = floor(2.54 / Delta_c); Delta_c in {0.02 s (r=1), 0.08 s (r=4)}; independent of the observations",
+    "clock_output": "y_j at tau_j depends only on X restricted to [0, tau_j]; sequence readout = uniform mean over j",
+    "perobs_output": "y_k at every knot t_k > 0; readout = time-weighted mean with weights (t_k - t_{k-1}) / 2.54",
+    "virtual_vs_measured": "every knot carries a measured flag; virtual knots are placed on the reconstruction and are never counted as measurements; downsampling and dropping act on measured knots only"
+  },
+  "model": {"n_stem": 32, "stem_tau_min": 0.02, "stem_tau_max": 2.56, "stem_f_max": 25.0, "H": 64, "N": 16, "n_layers": 4,
+            "dropout": 0.1, "tf_layers": 4, "tf_heads": 4, "nrde_H": 32, "nrde_hidden": 64},
+  "training": {"lr_by_family": {"ssm": 0.002, "transformer": 0.001, "nrde": 0.002}, "weight_decay": 0.01, "epochs": 15,
+               "batch_size": 64, "eval_batch_size": 128, "grad_clip": 1.0, "optimizer": "AdamW, cosine schedule, no warmup",
+               "selection": "best dev accuracy over epochs (native grid only)", "train_grid": "native 50 Hz grid only (no grid augmentation in the main arm)",
+               "seeds": [0, 1, 2]},
+  "groups": {
+    "G_foh1": {"train": "P1_foh_clock", "eval": ["P1_foh_clock", "A1_foh_perobs"]},
+    "G_zoh1": {"train": "A2_zoh_clock", "eval": ["A2_zoh_clock", "A3_zoh_perobs"]},
+    "G_none1": {"train": "B_point_clock1", "eval": ["B_point_clock1", "B_dtonly"]},
+    "G_tf1": {"train": "B_tf_clock1", "eval": ["B_tf_clock1"]},
+    "G_P4": {"train": "P4_foh_clock", "eval": ["P4_foh_clock"]},
+    "G_zoh4": {"train": "A2_zoh_clock4", "eval": ["A2_zoh_clock4"]},
+    "G_pt4": {"train": "B_point_clock4", "eval": ["B_point_clock4"]},
+    "G_bin4": {"train": "B_binmean_clock4", "eval": ["B_binmean_clock4"]},
+    "G_patch4": {"train": "B_patch_clock4", "eval": ["B_patch_clock4"]},
+    "G_tfpatch4": {"train": "B_tfpatch_clock4", "eval": ["B_tfpatch_clock4"]},
+    "G_nrde4": {"train": "B_nrde_clock4", "eval": ["B_nrde_clock4"]},
+    "G_rformer4": {"train": "B_rformer_clock4", "eval": ["B_rformer_clock4"]},
+    "G_bilin4": {"train": "B_bilin_clock4", "eval": ["B_bilin_clock4"]}
+  },
+  "groups_note": "On the native grid the clocked and per-observation rules of G_foh1, G_zoh1 and G_none1 are the same function (clock ticks = native knot times; checked numerically), so each pair is trained once and the fixed-clock ablation is an inference-time switch on identical weights.",
+  "ablation_2x2": {"both (exact stem + fixed clock)": "P1_foh_clock", "exact stem only": "A1_foh_perobs", "fixed clock only": "A2_zoh_clock", "neither": "A3_zoh_perobs",
+                   "coarse-clock analogue": {"both": "P4_foh_clock", "fixed clock only": "A2_zoh_clock4"}},
+  "conditions": {
+    "lossless (FOH)": ["native", "foh_m2", "foh_m4", "foh_rand (127 virtual knots at uniform random times)"],
+    "lossless (ZOH rule only)": ["zoh_m2"],
+    "real downsampling": ["down2 (25 Hz)", "down4 (12.5 Hz)", "down2_reknot (down2 path re-knotted with virtual knots at native times)"],
+    "missing observations": ["drop30", "drop50", "drop70", "drop50_reknot (same drop pattern as drop50, virtual knots at native times)"],
+    "rng": "per-window numpy default_rng([condition_seed, window_index]); identical for every model"
+  },
+  "eval": {"batch_size_perobs": 32, "fp64_subset": 256},
+  "metrics": {
+    "accuracy": "per condition; mean over 3 seeds; 95% CI by cluster bootstrap over the 9 test subjects (2000 resamples, seed 0) of the seed-mean",
+    "consistency": "relative logit change ||z_cond - z_native||_inf / ||z_native||_inf per window (median, p95) and prediction flip rate vs native",
+    "fp64_exactness": "max relative logit change on 256 test windows in float64 for foh_m2, foh_m4, foh_rand, zoh_m2 and down2_reknot vs down2",
+    "artifact_share": "for lossy conditions: |F(down2) - F(down2_reknot)| / |F(down2) - F(native)| (same path, different knots / total change); zero by construction for path functionals",
+    "cost": "scripts/cost_har.py on an otherwise idle machine, 1 thread: preprocessing seconds per window (raw knots -> model inputs) and forward seconds per window (batch 64), medians of 3 repeats on 512 test windows for native, foh_m4, down2, drop50; parameter count; training seconds per epoch from the logs (measured under 4-process contention)"
+  },
+  "hypotheses": {
+    "H1_exact (engineering)": "Every path-functional model (P1, P4, B_point_clock1/4, B_binmean_clock4, B_patch_clock4, B_tf_clock1, B_tfpatch_clock4, B_nrde_clock4, B_rformer_clock4) has float64 max relative logit change <= 1e-10 under foh_m2, foh_m4, foh_rand, and float32 flip rate <= 0.1% under these conditions.",
+    "H2_core": "Each per-observation model (A1_foh_perobs under foh_m2/m4/rand; A3_zoh_perobs and B_dtonly under zoh_m2, which is lossless for their own right-hold input rule) has median relative logit change >= 1e-3 (>= 100x the float32 floor) in float32 AND float64. PRACTICAL relevance additionally requires flip rate >= 0.5% or |accuracy change| >= 0.5 pp in at least one of these conditions.",
+    "H3_stem_bilinear": "B_bilin_clock4 (not exact) shows relative logit change >= 1e-4 under foh_m4 (descriptive).",
+    "H4_value": "GO criterion part G1 (below)."
+  },
+  "decision_rule": {
+    "G1_beats_simple_resampling": "P4_foh_clock or P1_foh_clock beats EVERY simple-resampling baseline (B_point_clock1, B_point_clock4, B_binmean_clock4, B_patch_clock4, B_tf_clock1, B_tfpatch_clock4) whose measured cost (prep + forward per window, native) is <= 1.5x its own, by >= 1.0 pp mean accuracy over the lossy conditions {down2, down4, drop30, drop50, drop70}, with the subject-bootstrap 95% CI of the difference excluding 0, and is no worse than -0.5 pp on native.",
+    "G2_not_prior_work": "The literature check finds no prior work with overall overlap 'substantial' or 'full' for 'exact input integration + nonlinear updates on a fixed clock', AND the close-work baselines (B_nrde_clock4, B_rformer_clock4, B_bilin_clock4) do not come within 1.0 pp of P on the same lossy mean.",
+    "verdict": "GO only if G1 AND G2. Otherwise NO_GO (gain explained by simple resampling or prior work). The answer to the core question (H2) is reported separately from GO/NO_GO."
+  },
+  "secondary_descriptive": [
+    "FS1 FlowState probe (real published model; Apache-2.0 weights ibm-granite/granite-timeseries-flowstate-r1 revisions v1.0 main and r1.1): real series ETTm1 (column OT). Lossless 2x/4x refinement by FOH virtual knots with scale_factor s/r; real 2x/4x downsampling with s*r; forecasts compared at common physical times; relative change of forecast and of the last backbone state. FlowState is called refinement-consistent if the relative forecast change is <= 1e-3.",
+    "AUG arm (only if the main arm finishes within budget): B_dtonly/A3 and P1/B_point_clock1 trained with grid augmentation; descriptive."
+  ],
+  "budget": {"cpu": "4 cores, no GPU (GPU gate records NOT_RUN)", "parallel_processes": 4, "threads_per_process": 1, "max_wall_clock_hours_main_arm": 5,
+             "on_budget_exceeded": "stop launching; mark missing runs NOT_RUN(TIMEOUT); no partial aggregates reported as complete"},
+  "stop_conditions": {
+    "S1_bug": "If H1 fails for any path functional, stop and fix the implementation before any scientific reading.",
+    "S2_no_go": "Decision rule above.",
+    "S3_no_sweep": "No hyper-parameter sweep beyond the pilot; one shared setting per family."
+  }
+}

@@ -1,0 +1,6 @@
+{
+ "torch": "2.14.0+cpu",
+ "cuda_available": false,
+ "status": "NOT_RUN",
+ "reason": "no CUDA device in this container (torch.cuda.is_available() is False)"
+}
