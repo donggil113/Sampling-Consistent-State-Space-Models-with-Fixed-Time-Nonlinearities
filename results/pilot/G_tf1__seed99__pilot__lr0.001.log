@@ -16,3 +16,6 @@ group G_tf1 seed 99 lr 0.001 epochs 20 dev subjects [1, 6, 22, 25] n_train 5950 
   ep  14 loss 0.0962 dev 0.9658 (71.0s)
   ep  15 loss 0.0937 dev 0.9608 (72.6s)
   ep  16 loss 0.0911 dev 0.9643 (69.1s)
+  ep  17 loss 0.0888 dev 0.9601 (67.0s)
+  ep  18 loss 0.0868 dev 0.9593 (68.0s)
+  ep  19 loss 0.0867 dev 0.9593 (73.3s)

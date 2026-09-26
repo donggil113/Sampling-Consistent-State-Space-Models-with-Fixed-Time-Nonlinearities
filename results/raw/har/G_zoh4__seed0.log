@@ -1,0 +1,18 @@
+group G_zoh4 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4188 dev 0.9465 (73.6s)
+  ep   1 loss 0.1568 dev 0.9508 (54.0s)
+  ep   2 loss 0.1247 dev 0.9515 (62.2s)
+  ep   3 loss 0.1142 dev 0.9508 (75.4s)
+  ep   4 loss 0.1016 dev 0.9579 (32.5s)
+  ep   5 loss 0.0960 dev 0.9636 (32.1s)
+  ep   6 loss 0.0840 dev 0.9579 (49.9s)
+  ep   7 loss 0.0640 dev 0.9615 (31.2s)
+  ep   8 loss 0.0662 dev 0.9565 (42.6s)
+  ep   9 loss 0.0518 dev 0.9601 (37.2s)
+  ep  10 loss 0.0472 dev 0.9572 (28.9s)
+  ep  11 loss 0.0401 dev 0.9551 (29.3s)
+  ep  12 loss 0.0356 dev 0.9544 (31.6s)
+  ep  13 loss 0.0333 dev 0.9551 (31.7s)
+  ep  14 loss 0.0306 dev 0.9551 (30.7s)
+  eval A2_zoh_clock4      native         acc 0.9352
+  eval A2_zoh_clock4      foh_m2         acc 0.9352

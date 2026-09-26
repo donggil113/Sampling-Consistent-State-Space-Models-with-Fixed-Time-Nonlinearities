@@ -1,0 +1,2 @@
+group AUG_dtonly seed 99 lr 0.002 epochs 1 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+AUG arm: per-epoch training grids drawn uniformly from ['native', 'foh_m2', 'zoh_m2', 'down2', 'drop30']

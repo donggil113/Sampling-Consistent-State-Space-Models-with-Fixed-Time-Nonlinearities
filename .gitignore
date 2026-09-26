@@ -1,4 +1,3 @@
 __pycache__/
 *.pyc
 *.pt
-results/raw/har/*__logits.npz

@@ -1,0 +1,14 @@
+group G_foh1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  eval P1_foh_clock       native         acc 0.9158
+  eval P1_foh_clock       foh_m2         acc 0.9158
+  eval P1_foh_clock       foh_m4         acc 0.9158
+  eval P1_foh_clock       foh_rand       acc 0.9158
+  eval P1_foh_clock       zoh_m2         acc 0.9155
+  eval P1_foh_clock       down2          acc 0.9165
+  eval P1_foh_clock       down4          acc 0.9152
+  eval P1_foh_clock       down2_reknot   acc 0.9165
+  eval P1_foh_clock       drop30         acc 0.9162
+  eval P1_foh_clock       drop50         acc 0.9091
+  eval P1_foh_clock       drop70         acc 0.8894
+  eval P1_foh_clock       drop50_reknot  acc 0.9091
+  fp64 P1_foh_clock: {'foh_m2': 2.14221671331318e-16, 'foh_m4': 2.14221671331318e-16, 'foh_rand': 2.14221671331318e-16, 'zoh_m2': 0.0059652784123258775, 'down2_reknot': 0.0}

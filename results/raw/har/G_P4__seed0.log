@@ -1,0 +1,29 @@
+group G_P4 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4184 dev 0.9479 (34.0s)
+  ep   1 loss 0.1576 dev 0.9508 (37.0s)
+  ep   2 loss 0.1244 dev 0.9522 (36.0s)
+  ep   3 loss 0.1147 dev 0.9479 (65.2s)
+  ep   4 loss 0.1033 dev 0.9551 (47.8s)
+  ep   5 loss 0.0939 dev 0.9672 (58.9s)
+  ep   6 loss 0.0829 dev 0.9536 (66.1s)
+  ep   7 loss 0.0643 dev 0.9593 (63.7s)
+  ep   8 loss 0.0623 dev 0.9565 (89.5s)
+  ep   9 loss 0.0514 dev 0.9579 (35.2s)
+  ep  10 loss 0.0465 dev 0.9551 (34.5s)
+  ep  11 loss 0.0396 dev 0.9551 (51.7s)
+  ep  12 loss 0.0351 dev 0.9551 (34.2s)
+  ep  13 loss 0.0327 dev 0.9551 (45.5s)
+  ep  14 loss 0.0302 dev 0.9551 (34.7s)
+  eval P4_foh_clock       native         acc 0.9196
+  eval P4_foh_clock       foh_m2         acc 0.9196
+  eval P4_foh_clock       foh_m4         acc 0.9196
+  eval P4_foh_clock       foh_rand       acc 0.9196
+  eval P4_foh_clock       zoh_m2         acc 0.9189
+  eval P4_foh_clock       down2          acc 0.9189
+  eval P4_foh_clock       down4          acc 0.9162
+  eval P4_foh_clock       down2_reknot   acc 0.9189
+  eval P4_foh_clock       drop30         acc 0.9192
+  eval P4_foh_clock       drop50         acc 0.9169
+  eval P4_foh_clock       drop70         acc 0.9030
+  eval P4_foh_clock       drop50_reknot  acc 0.9169
+  fp64 P4_foh_clock: {'foh_m2': 3.7032971932637535e-16, 'foh_m4': 3.7032971932637535e-16, 'foh_rand': 3.7032971932637535e-16, 'zoh_m2': 0.010917598281427228, 'down2_reknot': 3.693314139323201e-16}

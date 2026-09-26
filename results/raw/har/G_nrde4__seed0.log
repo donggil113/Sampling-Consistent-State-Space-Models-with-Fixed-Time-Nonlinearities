@@ -1,0 +1,11 @@
+group G_nrde4 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4363 dev 0.8538 (5.1s)
+  ep   1 loss 0.1626 dev 0.9151 (4.8s)
+  ep   2 loss 0.1374 dev 0.9094 (5.3s)
+  ep   3 loss 0.1249 dev 0.8987 (4.7s)
+  ep   4 loss 0.1133 dev 0.9101 (5.7s)
+  ep   5 loss 0.1058 dev 0.9180 (4.9s)
+  ep   6 loss 0.0979 dev 0.9094 (5.1s)
+  ep   7 loss 0.0881 dev 0.9215 (4.9s)
+  ep   8 loss 0.0845 dev 0.9258 (4.0s)
+  ep   9 loss 0.0764 dev 0.9194 (4.7s)
