@@ -1,0 +1,12 @@
+group G_none1 seed 1 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  eval B_point_clock1     native         acc 0.9328
+  eval B_point_clock1     foh_m2         acc 0.9328
+  eval B_point_clock1     foh_m4         acc 0.9328
+  eval B_point_clock1     foh_rand       acc 0.9328
+  eval B_point_clock1     zoh_m2         acc 0.9328
+  eval B_point_clock1     down2          acc 0.9342
+  eval B_point_clock1     down4          acc 0.9345
+  eval B_point_clock1     down2_reknot   acc 0.9342
+  eval B_point_clock1     drop30         acc 0.9332
+  eval B_point_clock1     drop50         acc 0.9304
+  eval B_point_clock1     drop70         acc 0.9165
