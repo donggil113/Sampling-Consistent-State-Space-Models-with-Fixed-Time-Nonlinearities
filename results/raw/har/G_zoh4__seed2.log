@@ -1,0 +1,4 @@
+group G_zoh4 seed 2 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4211 dev 0.9444 (47.3s)
+  ep   1 loss 0.1467 dev 0.9351 (51.5s)
+  ep   2 loss 0.1214 dev 0.9665 (52.9s)

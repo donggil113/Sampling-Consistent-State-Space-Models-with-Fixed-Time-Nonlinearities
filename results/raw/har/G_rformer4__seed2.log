@@ -10,3 +10,20 @@ group G_rformer4 seed 2 lr 0.001 epochs 15 dev subjects [1, 6, 22, 25] n_train 5
   ep   8 loss 0.1190 dev 0.9565 (17.8s)
   ep   9 loss 0.1144 dev 0.9429 (18.3s)
   ep  10 loss 0.1069 dev 0.9437 (19.7s)
+  ep  11 loss 0.1010 dev 0.9494 (19.6s)
+  ep  12 loss 0.0963 dev 0.9451 (18.0s)
+  ep  13 loss 0.0916 dev 0.9444 (18.1s)
+  ep  14 loss 0.0899 dev 0.9444 (17.4s)
+  eval B_rformer_clock4   native         acc 0.9009
+  eval B_rformer_clock4   foh_m2         acc 0.9009
+  eval B_rformer_clock4   foh_m4         acc 0.9009
+  eval B_rformer_clock4   foh_rand       acc 0.9009
+  eval B_rformer_clock4   zoh_m2         acc 0.9013
+  eval B_rformer_clock4   down2          acc 0.9033
+  eval B_rformer_clock4   down4          acc 0.7774
+  eval B_rformer_clock4   down2_reknot   acc 0.9033
+  eval B_rformer_clock4   drop30         acc 0.8965
+  eval B_rformer_clock4   drop50         acc 0.8785
+  eval B_rformer_clock4   drop70         acc 0.8059
+  eval B_rformer_clock4   drop50_reknot  acc 0.8785
+  fp64 B_rformer_clock4: {'foh_m2': 2.4306753128636104e-15, 'foh_m4': 2.8393729318406776e-15, 'foh_rand': 3.796585776286966e-15, 'zoh_m2': 0.06017317165530883, 'down2_reknot': 5.906881735650276e-15}

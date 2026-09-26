@@ -10,3 +10,20 @@ group G_tfpatch4 seed 2 lr 0.001 epochs 15 dev subjects [1, 6, 22, 25] n_train 5
   ep   8 loss 0.1095 dev 0.9565 (17.8s)
   ep   9 loss 0.1033 dev 0.9586 (18.6s)
   ep  10 loss 0.1014 dev 0.9608 (18.4s)
+  ep  11 loss 0.0973 dev 0.9601 (19.4s)
+  ep  12 loss 0.0948 dev 0.9586 (18.9s)
+  ep  13 loss 0.0929 dev 0.9579 (17.3s)
+  ep  14 loss 0.0916 dev 0.9558 (18.3s)
+  eval B_tfpatch_clock4   native         acc 0.8996
+  eval B_tfpatch_clock4   foh_m2         acc 0.8996
+  eval B_tfpatch_clock4   foh_m4         acc 0.8996
+  eval B_tfpatch_clock4   foh_rand       acc 0.8996
+  eval B_tfpatch_clock4   zoh_m2         acc 0.8996
+  eval B_tfpatch_clock4   down2          acc 0.9019
+  eval B_tfpatch_clock4   down4          acc 0.9053
+  eval B_tfpatch_clock4   down2_reknot   acc 0.9019
+  eval B_tfpatch_clock4   drop30         acc 0.9009
+  eval B_tfpatch_clock4   drop50         acc 0.8968
+  eval B_tfpatch_clock4   drop70         acc 0.8816
+  eval B_tfpatch_clock4   drop50_reknot  acc 0.8968
+  fp64 B_tfpatch_clock4: {'foh_m2': 0.0, 'foh_m4': 0.0, 'foh_rand': 0.0, 'zoh_m2': 0.0, 'down2_reknot': 0.0}

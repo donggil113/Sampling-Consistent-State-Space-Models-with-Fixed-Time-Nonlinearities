@@ -1,0 +1,5 @@
+group G_P4 seed 2 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 n_dev 1402 n_test 2947
+  ep   0 loss 0.4203 dev 0.9465 (45.2s)
+  ep   1 loss 0.1461 dev 0.9351 (47.9s)
+  ep   2 loss 0.1205 dev 0.9658 (53.4s)
+  ep   3 loss 0.1064 dev 0.9636 (52.9s)

@@ -15,3 +15,4 @@ group G_foh1 seed 0 lr 0.002 epochs 15 dev subjects [1, 6, 22, 25] n_train 5950 
   eval A1_foh_perobs      native         acc 0.9158
   eval A1_foh_perobs      foh_m2         acc 0.9162
   eval A1_foh_perobs      foh_m4         acc 0.9162
+  eval A1_foh_perobs      foh_rand       acc 0.9158
